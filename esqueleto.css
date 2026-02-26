@@ -1,6 +1,6 @@
- :root {
+/* :root {
 
-}
+}*/
 
 body {
    background: linear-gradient(135deg, rgb(255, 255, 255)15%, rgba(25, 205, 91, 0.578)85%);
@@ -28,7 +28,7 @@ body {
 .s1 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
   background-color:rgba(25, 205, 91, 0.578);
-  //eu esqueci como muda as bordas*--
+  /*eu esqueci como muda as bordas*/
 }
 
 .button {
@@ -49,4 +49,22 @@ body {
 .reset {
   position:absolute;
   left:44%;
+}
+
+.css-menu-container{
+  display:flex;
+}
+
+/*imagem do menu que expande quadrado*/
+.css-img-menu{
+  cursor: pointer;
+}
+
+
+
+/*quadrado aparecida após clicar o bottom*/
+.css-expandedBox{
+  position: fixed;
+  height:100%;
+  width:50px;
 }
