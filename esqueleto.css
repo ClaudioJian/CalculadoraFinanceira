@@ -1,9 +1,9 @@
- :root {
+/* :root {
 
-}
+}*/
 
 body {
-   background: linear-gradient(135deg, rgb(255, 255, 255)15%, rgba(25, 205, 91, 0.578)85%);
+  background: linear-gradient(135deg, rgb(255, 255, 255)15%, rgba(25, 205, 91, 0.578)85%);
   margin: 0;
   padding: 0;
   width: 100%;
@@ -11,13 +11,14 @@ body {
   overflow: hidden; 
 }
 
+/* ------------------selector css ----------------------*/
 .selector {
-  background-color: rgba(25, 205, 91, 0.578);
+  background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
   width: 15vw;
   height: 10vh;
-  position:absolute;
+  position:static;
   border-radius: 15% 15% 15% 15%;
   border-style: solid;
   top: 75px;
@@ -28,12 +29,56 @@ body {
 .s1 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
   background-color:rgba(25, 205, 91, 0.578);
-  //eu esqueci como muda as bordas*--
+  /*eu esqueci como muda as bordas*/
 }
 
+.s2 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s3 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s4 {
+  border-style: 500px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+/*items do selectores*/
+.css-container-itens{
+  position: absolute;
+}
+
+/*modifica visualização do elemento nos itens quando mouse está em cima
+vvvvv ajuste background-color para visualizar efeito vvvvv*/
+.selecting-itens{
+  /*background-color: aliceblue;*/
+  cursor: pointer;
+}
+
+/* ------------------button css ----------------------*/
 .button {
   position:absolute;
   bottom:20%;
+  background-color: rgba(25, 205, 91, 0.578);
+  margin: 0;
+  padding: 0;
+  width: 25vw;
+  height: 15vh;
+  border-radius: 15% 15% 15% 15%;
+  border-style: solid;
+  text-align: center;
+}
+
+.button:hover  {
+  transform:scale(1.1);
+  background-color: rgba(24, 182, 82, 0.882)
 }
 
 .calc {
@@ -43,10 +88,47 @@ body {
 
 .clear {
   position:absolute;
-  left:25%;
+  left:37%;
 }
 
 .reset {
   position:absolute;
-  left:44%;
+  left:65%;
+}
+
+/*tipo de botão para extender ou aparecer pop-up*/
+[data-type="extendable"]{
+  cursor: pointer;
+}
+
+/* ------------------menu css----------------------*/
+
+/*imagem do menu que expande quadrado*/
+.css-img-menu{
+  background-color: transparent;
+}
+
+/*quadrado aparecida após clicar o bottom*/
+.css-menu{
+  top:0%;
+  position: fixed;
+  height:100%;
+  /*width:90px;*/
+  background-color: black;
+  display:flex;
+  z-index: 9999;
+}
+
+/* ------------------JS utilidade ----------------------*/
+.hidden{
+  opacity: 0%;
+  visibility: hidden;
+}
+
+/* ------------------imagem temporária ----------------------*/
+img[src="image/img_placeholder.jpg"]{
+  width: 50px;
+  height : 50px;
+  background-color: transparent;
+  border-radius: 10px;
 }
