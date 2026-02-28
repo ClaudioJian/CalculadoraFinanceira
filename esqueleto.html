@@ -8,37 +8,72 @@
   </head>
   <body>
       <main>
-        <div data-action="open-menu" data-type="extendable">
-            <img class="css-img-menu" src="image/img_placeholder.jpg">
+        <!--menu-->
+        <div class="css-menu" data-type="extendedBox" data-for="menu">
+          <a href="esqueleto.html">test</a>
+          <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
+        </div>
+        <!--button for open menu-->
+        <div>
+            <img class="css-img-menu" data-action="open-menu" data-type="extendable" src="image/img_placeholder.jpg">
         </div>
 
-        <div class="selector s1">
-          <div class="investimento"></div>
-          <div class="imposto"></div>
+        <!--selector-->
+        <!--data-order ordena os items conforme número-->
+        <div>
+          <div class="selector s1" data-action="open-selector" data-type="extendable">
+            <div class="investimento" data-order="0"></div>
+          </div>
+          <!--items-->
+          <div class="css-container-itens" data-type="extendedBox">
+            <div class="imposto" data-order="1"></div>
+          </div>
         </div>
-        <div class="selector s2">
-          <div class= "investimento_A"></div>
-          <div class= "investimento_B"></div>
-          <div class= "investimento_C"></div>
+
+        <div>
+          <div class= "selector s2" data-action="open-selector" data-type="extendable">
+            <div class="investimento_A" data-order="0"></div>
+          </div>
+          <!--items-->
+          <div class="css-container-itens" data-type="extendedBox">
+            <div class="investimento_B" data-order="1"></div>
+            <div class="investimento_C" data-order="2"></div>
+          </div>
         </div>
-        <div class="selector s3">
-          <div class= "imposto_A"></div>
-          <div class= "imposto_B"></div>
-          <div class= "imposto_C"></div>
+
+        <div>
+          <div class= "selector s3" data-action="open-selector" data-type="extendable">
+            <div class="imposto_A" data-order="0"></div>
+          </div>
+          <!--items-->
+          <div class="css-container-itens" data-type="extendedBox">
+            <div class= "imposto_B" data-order="1"></div>
+            <div class= "imposto_C" data-order="2"></div>
+          </div>
         </div>
+
         <div class="insert">
           <div class="prazo"></div>
         </div>
-        <div class="selector s4">
-          <div class="gráfico g1"></div>
-          <div class="gráfico g2"></div>
-          <div class="gráfico g3"></div>
+
+        <div>
+          <div class="selector s4" data-action="open-selector" data-type="extendable">
+            <div class="gráfico g1" data-order="0"></div>
+          </div>
+          <!--items-->
+          <div class="css-container-itens" data-type="extendedBox">
+            <div class="gráfico g2" data-order="1"></div>
+            <div class="gráfico g3" data-order="2"></div>
+          </div>
         </div>
+
+        <!--buttons-->
         <div class="agrupment_button">
           <button type="button" class="button calc">Calcular</button>
           <button type="button" class="button clear">Limpar tudo</button>
           <button type="button" class="button reset">Resetar</button>
         </div>
+
       </main>
       <script src="./main.js"></script>
   </body>
