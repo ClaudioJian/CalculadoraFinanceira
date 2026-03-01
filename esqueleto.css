@@ -13,7 +13,7 @@ body {
 
 /* ------------------selector css ----------------------*/
 .selector {
-  background-color: rgba(25, 205, 91, 0.578);
+  background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
   width: 15vw;
@@ -28,6 +28,24 @@ body {
 
 .s1 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s2 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s3 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s4 {
+  border-style: 500px rgb(169, 22, 22) solid 100%;
   background-color:rgba(25, 205, 91, 0.578);
   /*eu esqueci como muda as bordas*/
 }
@@ -48,6 +66,19 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .button {
   position:absolute;
   bottom:20%;
+  background-color: rgba(25, 205, 91, 0.578);
+  margin: 0;
+  padding: 0;
+  width: 25vw;
+  height: 15vh;
+  border-radius: 15% 15% 15% 15%;
+  border-style: solid;
+  text-align: center;
+}
+
+.button:hover  {
+  transform:scale(1.1);
+  background-color: rgba(24, 182, 82, 0.882)
 }
 
 .calc {
@@ -57,12 +88,12 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 .clear {
   position:absolute;
-  left:25%;
+  left:37%;
 }
 
 .reset {
   position:absolute;
-  left:44%;
+  left:65%;
 }
 
 /*tipo de botão para extender ou aparecer pop-up*/
