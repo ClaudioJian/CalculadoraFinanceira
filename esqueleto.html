@@ -9,14 +9,19 @@
   <body>
       <main>
         <!--menu-->
-        <div class="css-menu" data-type="extendedBox" data-for="menu">
-          <a href="esqueleto.html">test</a>
-          <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
-        </div>
-        <!--button for open menu-->
-        <div>
+        <div class="css-menu-container">
+          <div class="css-menu" data-type="extendedBox" data-for="menu">
+            <a href="esqueleto.html">test</a>
+            <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
+            <div class="resizer js-right"></div>
+          </div>
+          <!--button for open menu-->
+          <div style="height: fit-content;">
             <img class="css-img-menu" data-action="open-menu" data-type="extendable" src="image/img_placeholder.jpg">
+          </div>
         </div>
+        
+
 
         <!--selector-->
         <!--data-order ordena os items conforme número-->
@@ -32,7 +37,7 @@
 
         <div>
           <div class= "selector s2" data-action="open-selector" data-type="extendable">
-            <div class="investimento_A" data-order="0"></div>
+            <div class="investimento_A" data-order="0">INVA</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
@@ -72,6 +77,27 @@
           <button type="button" class="button calc">Calcular</button>
           <button type="button" class="button clear">Limpar tudo</button>
           <button type="button" class="button reset">Resetar</button>
+        </div>
+
+        <div class="test-container">
+          <div class="test" data-type="extendedBox">
+            <div>
+              <div class="resizer js-top"></div>
+              <div class="resizer js-left"></div>
+              <div class="resizer js-right"></div>
+              <div class="resizer js-bottom"></div>
+
+              <div class="resizer js-top js-left"></div>
+              <div class="resizer js-top js-right"></div>
+              <div class="resizer js-bottom js-left"></div>
+              <div class="resizer js-bottom js-right"></div>
+            </div>
+
+            <div class="draggable">
+              <p>CALCULADORA</p>
+            </div>
+
+          </div>
         </div>
 
       </main>
