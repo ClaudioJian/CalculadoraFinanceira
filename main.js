@@ -5,15 +5,15 @@ function ClearAllExtendedBox(event){
   if(!event.target.closest('[data-type="extendedBox"]') && 
       !event.target.closest('[data-type="extendable"]')){
     extendedBox.forEach(box => {
-      if (box.classList.contains('hidden')) {
+      if (!box.classList.contains('hidden')) {
         box.classList.add("hidden");
-
+        box.style.width = "";
+        box.style.height = "";
+        box.style.left = "";
+        box.style.right= "";
       }
     });
-    box.style.width = "";
-    box.style.height = "";
-    box.style.left = "";
-    box.style.right= "";
+
 
     extendableElementList.forEach(triggerElement=>{
       if(triggerElement) triggerElement.isExtended = false;
@@ -23,21 +23,39 @@ function ClearAllExtendedBox(event){
   }
 };
 
-function RenderItens(parentElement,itemBox){
-  const btnSelector = parentElement.querySelector('[data-action="open-selector"]');
+function RenderSelectingItem(itemBox, target){
   itemBox.addEventListener("mouseover",(event)=>{
-      if(event.target.dataset.order!==undefined)
-      event.target.classList.add("selecting-itens");
+    if(event.target.dataset.order!==undefined)
+    event.target.classList.add("selecting-itens");
     }
   );
 
+  //deselecting
   itemBox.addEventListener("mouseout",(event)=>{
-      if(event.target.dataset.order!==undefined)
-        event.target.classList.remove("selecting-itens");
-    }
-  );
+  if(event.target.dataset.order!==undefined)
+    event.target.classList.remove("selecting-itens");
+  });
+}
 
+function RenderItens(parentElement,itemBox){
+  //parentElement is trigger's parent
+  const btnSelector = parentElement.querySelector('[data-action="open-selector"]');
+
+  //find what type is: investimento/imposto/etc
+  let targetType;
+  targetSelectorList.forEach( s =>{
+    if(btnSelector.dataset.targetID === s.dataset.targetID) 
+      targetType = s.firstElementChild;
+  });
+
+  if(!targetType) console.warn("no valid selector finded! add data-targetID to both selector!");
+
+  //change selecting item visual
+  RenderSelectingItem(itemBox);
+
+  //select item-> change to main
   const SelectItem = (event)=>{
+
     const selected = event.target.closest('[data-order]');
 
     //clean all elements
@@ -62,7 +80,11 @@ function RenderItens(parentElement,itemBox){
       }
     }
     
-    elementList.forEach(el=>itemBox.appendChild(el));
+    elementList.forEach(el=>{
+        itemBox.appendChild(el);
+
+      });
+
     itemBox.classList.add('hidden');
     btnSelector.isExtended = false;
   };
@@ -77,7 +99,7 @@ function RenderItens(parentElement,itemBox){
 const extendableElementList = document.querySelectorAll('[data-type="extendable"]');
 const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
 const selector = document.querySelectorAll('.selector');
-
+const targetSelectorList = document.querySelectorAll('[data-for="filter"]');
 
 //extendableBox
 extendedBox.forEach(box=>box.classList.add("hidden"));
@@ -215,8 +237,3 @@ resizers.forEach(resizerEl=>resizerEl.addEventListener("dblclick", event=>{
   localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
 }
 ));
-
-
-
-const testB = document.querySelector('.test-container');
-testB.querySelector('.test').classList.remove('hidden');

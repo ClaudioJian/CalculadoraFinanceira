@@ -33,35 +33,39 @@
           <div class="instrucao i5">Tipo de gráfico</div>
         </div>
         <!-- Nota: precisamos adicionar no javascript a opção de deixar desligado enquanto não selecionar nenhum dos 2(inves/impos)--> 
+        <!--data-targetID: other with same data-targetID will grab selector with data-for="filter"
+          se selector tem data-for="filter" -> só pode existir um elemento abaixo dele
+        -->
         <div class="selector-container s1">
-          <div class="selector" data-action="open-selector" data-type="extendable">
-            <div class="investimento" data-order="0">Investimento</div>
+          <div class="selector" data-action="open-selector" data-type="extendable" data-for="filter" data-targetID="0">
+            <div class="investimento" data-type="investimento" data-order="0" >Investimento</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class="imposto" data-order="1">Imposto</div>
+            <div class="imposto" data-type="imposto" data-order="1">Imposto</div>
           </div>
         </div>
 
         <div class="selector-container s2">
-          <div class= "selector" data-action="open-selector" data-type="extendable">
-            <div class="investimento_A" data-order="0">Teste1</div>
+          <div class= "selector" data-action="open-selector" data-type="extendable" data-targetID="0">
+            <div class="investimento_A" data-type="investimento" data-order="0">Teste1</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class="investimento_B" data-order="1">Teste2</div>
-            <div class="investimento_C" data-order="2">Teste3</div>
+            <div class="investimento_B" data-type="investimento" data-order="1">Teste2</div>
+            <div class="investimento_C" data-type="investimento" data-order="1">Teste2</div>
+            <div class="imposto_C" data-type="imposto" data-order="2">Teste3</div>
           </div>
         </div>
 
         <div class="selector-container s3">
           <div class= "selector" data-action="open-selector" data-type="extendable">
-            <div class="imposto_A" data-order="0"></div>
+            <div class="imposto_A" data-order="0">teste0</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class= "imposto_B" data-order="1"></div>
-            <div class= "imposto_C" data-order="2"></div>
+            <div class= "imposto_B" data-order="1">teste1</div>
+            <div class= "imposto_C" data-order="2">teste2</div>
           </div>
         </div>
 
@@ -88,7 +92,7 @@
         </div>
 
 
-
+<!--
         <div class="test-container">
           <div class="test" data-type="extendedBox">
             <div>
@@ -107,6 +111,7 @@
             </div>
           </div>
         </div>
+-->
 
       </main>
       <script src="./main.js"></script>
