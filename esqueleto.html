@@ -25,29 +25,37 @@
 
         <!--selector-->
         <!--data-order ordena os items conforme número-->
-        <div>
-          <div class="selector s1" data-action="open-selector" data-type="extendable">
-            <div class="investimento" data-order="0"></div>
+        <div class="instrucoes">
+          <div class="instrucao i1">O que seria?</div>
+          <div class="instrucao i2">Tipo?</div>
+          <div class="instrucao i3">Valores investidos<br> sequintes</div>
+          <div class="instrucao i4">Prazo</div>
+          <div class="instrucao i5">Tipo de gráfico</div>
+        </div>
+        <!-- Nota: precisamos adicionar no javascript a opção de deixar desligado enquanto não selecionar nenhum dos 2(inves/impos)--> 
+        <div class="selector-container s1">
+          <div class="selector" data-action="open-selector" data-type="extendable">
+            <div class="investimento" data-order="0">Investimento</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class="imposto" data-order="1"></div>
+            <div class="imposto" data-order="1">Imposto</div>
           </div>
         </div>
 
-        <div>
-          <div class= "selector s2" data-action="open-selector" data-type="extendable">
-            <div class="investimento_A" data-order="0">INVA</div>
+        <div class="selector-container s2">
+          <div class= "selector" data-action="open-selector" data-type="extendable">
+            <div class="investimento_A" data-order="0">Teste1</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class="investimento_B" data-order="1"></div>
-            <div class="investimento_C" data-order="2"></div>
+            <div class="investimento_B" data-order="1">Teste2</div>
+            <div class="investimento_C" data-order="2">Teste3</div>
           </div>
         </div>
 
-        <div>
-          <div class= "selector s3" data-action="open-selector" data-type="extendable">
+        <div class="selector-container s3">
+          <div class= "selector" data-action="open-selector" data-type="extendable">
             <div class="imposto_A" data-order="0"></div>
           </div>
           <!--items-->
@@ -61,8 +69,8 @@
           <div class="prazo"></div>
         </div>
 
-        <div>
-          <div class="selector s4" data-action="open-selector" data-type="extendable">
+        <div class="selector-container s4">
+          <div class="selector" data-action="open-selector" data-type="extendable">
             <div class="gráfico g1" data-order="0"></div>
           </div>
           <!--items-->
@@ -79,6 +87,8 @@
           <button type="button" class="button reset">Resetar</button>
         </div>
 
+
+
         <div class="test-container">
           <div class="test" data-type="extendedBox">
             <div>
@@ -92,11 +102,9 @@
               <div class="resizer js-bottom js-left"></div>
               <div class="resizer js-bottom js-right"></div>
             </div>
-
-            <div class="draggable">
-              <p>CALCULADORA</p>
+            <div class="draggrable">
+              <p>Calculadora</p>
             </div>
-
           </div>
         </div>
 

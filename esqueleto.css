@@ -12,46 +12,58 @@ body {
 }
 
 /* ------------------selector css ----------------------*/
+
+/* este é para itens pode na posição correta*/
+.selector-container{
+  position: absolute;
+  margin-top: 100px;
+}
+
 .selector {
   background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
   width: 15vw;
   height: 10vh;
-  position:static;
   border-radius: 15% 15% 15% 15%;
   border-style: solid;
   top: 75px;
   left: 10px;
   text-align: center;
+  border-style: 15px rgb(169, 22, 22) solid 100%;
 }
 
 .s1 {
-  border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
+  background-color:rgb(255, 255, 255);
+  left:10%;
   /*eu esqueci como muda as bordas*/
 }
+
 .s2 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
+  background-color:rgb(255, 255, 255);
+  left:30%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s3 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
+  background-color:rgb(255, 255, 255);
+  left:50%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s4 {
   border-style: 500px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
+  background-color:rgb(255, 255, 255);
+  left:70%;
   /*eu esqueci como muda as bordas*/
 }
 
 /*items do selectores*/
 .css-container-itens{
   position: absolute;
+  top:100%;
 }
 
 /*modifica visualização do elemento nos itens quando mouse está em cima
@@ -92,8 +104,59 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 .reset {
   position:absolute;
-  left:65%;
+ left:64%;
 }
+
+.instrucoes {
+  position:static;
+  display:flex;
+}
+
+/*-------------------------instrução---------------------------*/
+.instrucao {
+  position:absolute;
+  min-width:20px;
+  max-width:300px;
+  min-height:17px;
+  display:flex;
+  flex-wrap:wrap;
+  background:hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color:rgb(15, 32, 80);
+  font: bold 13px Arial;
+  overflow-wrap: break-word;
+}
+
+
+.i1 {
+  position:absolute;
+  left:10%;
+}
+
+.i2 {
+  position:absolute;
+  left:30%;
+}
+
+.i3 {
+  position:absolute;
+  left:50%;
+}
+
+.i4 {
+  position:absolute;
+  left:70%;
+}
+
+.i5 {
+  position:absolute;
+  left:10%;
+  top:40%;
+}
+
+/*inicio parte css para javascript*/
 
 /*tipo de botão para extender ou aparecer pop-up*/
 [data-type="extendable"]{
@@ -190,12 +253,14 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
   width: 300px;
   height: 200px;
   background-color: aqua;
-  position: relative;
-  
+  position: absolute;
+  left:200px;
+  top:500px;
 }
 
 .test-container{
   left:200px;
+  top:800px;
 }
 
 /* ------------------imagem temporária ----------------------*/
