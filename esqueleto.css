@@ -9,6 +9,7 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden; 
+  position: relative;
 }
 
 /* ------------------selector css ----------------------*/
@@ -233,11 +234,12 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .resizer.js-left{left:-5px;}
 .resizer.js-right{right:-5px;}
 
-/*-------------------draggrable-------------------------*/
+/*-------------------draggable-------------------------*/
 .draggable{
   background-color: aliceblue;
   border: 2px solid black;
   height:60px;
+  user-select: none;
 }
 
 /* ------------------JS utilidade ----------------------*/
@@ -250,18 +252,28 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 
 
-.test{
+
+.css-img-calculator{
+  left:100px;
+}
+
+.btn-calculator-out{
+  height: 60px;
+}
+
+.btn-calculator-inside{
+  height: 60px;
+  right: 0;
+  top:-60px;
+  position: absolute;
+}
+
+.calculator-container{
+  position: absolute;
+  z-index: 3000;
   width: 300px;
   height: 200px;
   background-color: aqua;
-  position: absolute;
-  left:200px;
-  top:500px;
-}
-
-.test-container{
-  left:200px;
-  top:800px;
 }
 
 /* ------------------imagem temporária ----------------------*/

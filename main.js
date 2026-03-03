@@ -19,9 +19,9 @@ function ElementBubbleSort(elementList){
 //function for html
 function ClearAllExtendedBox(event){
   event.stopPropagation();
+  const isUIElement = event.target.closest('[data-type="extendedBox"], [data-type="extendable"], .draggable');
 
-  if(!event.target.closest('[data-type="extendedBox"]') && 
-    !event.target.closest('[data-type="extendable"]')){
+  if(!isUIElement){
       extendedBox.forEach(box => {
       if (!box.classList.contains('hidden')) {
         box.classList.add("hidden");
@@ -33,8 +33,8 @@ function ClearAllExtendedBox(event){
       });
 
 
-    extendableElementList.forEach(triggerElement=>{
-      if(triggerElement) triggerElement.isExtended = false;
+    extendedBox.forEach(itemBox=>{
+      if(itemBox) itemBox.isExtended = false;
     });
 
     document.body.removeEventListener("click",ClearAllExtendedBox);
@@ -74,7 +74,7 @@ function ClearDepedentSelector(firstID){
         elementList.forEach(el=>targetBox.appendChild(el));
       }
       
-      s.isExtended = false;
+      targetBox.isExtended = false;
       targetBox.classList.add('hidden');
       //add hidden to all children with depencity
       for(c of targetBox.children){
@@ -115,7 +115,7 @@ function AddSelectEvent(parentElement,itemBox){
     
     elementList.forEach(el=>itemBox.appendChild(el));
     
-    btnSelector.isExtended = false;
+    itemBox.isExtended = false;
     itemBox.classList.add('hidden');
 
     if(btnSelector.dataset.filterid) {
@@ -159,78 +159,12 @@ function GetDepencityTarget(itemBox){
   console.warn("cannot find selector with data-filterID, you must set filterID as same as depencityID:", depencityID, "from element - ", itemBox.closest('.selector-container'));
 }
 
-//variable global
-
-
-//-----------------------------------elements-------------------------------------------------------------
-const extendableElementList = document.querySelectorAll('[data-type="extendable"]');
-const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
-const allSelector = document.querySelectorAll('.selector');
-//hidden all selector's item with depencity
-allSelector.forEach(s=>{
-  const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
-  if(selectorBox.dataset.depencityid) {
-    for(target of selectorBox.children) {
-      //don't add hidden to all
-      if(target.dataset.type!=="all") target.classList.add('hidden');
-    }
-  }
-});
-
-
-
-
-//-----------------------------------extendableBox--------------------------------------------------------
-extendedBox.forEach(box=>box.classList.add("hidden"));
-
-extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
-  event.stopPropagation();
-  const action = trigger.dataset.action;
-
-  trigger.isExtended=!trigger.isExtended;
-
-  let targetElement =[];
-  
-  if(action === "open-menu"){
-    targetElement = [document.body.querySelector('[data-for="menu"]')];
-    const resizedMenuWidth = JSON.parse(localStorage.getItem('menuSize'));
-    if(resizedMenuWidth) targetElement[0].style.width = resizedMenuWidth.width;
-  }
-  else if(action==="open-selector") {
-    const parentElement = trigger.parentNode;
-    const itemBox = parentElement.querySelector('[data-type="extendedBox"]');
-    if(!trigger.initialized) {
-      AddSelectEvent(parentElement,itemBox);
-      trigger.initialized = true;
-    }
-    if(itemBox.dataset.depencityid) targetElement = Array.from(GetDepencityTarget(itemBox));
-    targetElement.push(itemBox);
-  }
-
-  if(trigger.isExtended){
-    targetElement.forEach(t => {t.classList.remove("hidden");});
-    document.body.addEventListener("click",ClearAllExtendedBox);
-  }else {
-    targetElement.forEach(t => {
-      t.classList.add("hidden");
-      t.style.width = "";
-    });
-  }
-  }
-));
-
-
-
-
-
-//-------------------------------------------resizer---------------------------------------------------------------------------
-const resizers = document.querySelectorAll('.resizer');
-
-resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
+function FollowMouseChange(event,El){
   event.preventDefault();
+  document.body.removeEventListener("click",ClearAllExtendedBox);
 
-  const targetElement = resizerEl.parentNode;
-  const classes = resizerEl.classList;
+  const targetElement = El.closest('[data-type="extendedBox"]');
+  const classes = El.classList;
   const storageName = targetElement.dataset.for;
 
   const sizeTarget = targetElement.getBoundingClientRect();
@@ -240,20 +174,23 @@ resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
   const startMouseX = event.clientX;
   const startMouseY = event.clientY;
 
-
   function moving(e){
     classes.forEach(c=>{
       const distanceY = e.clientY - startMouseY;
       const distanceX =  e.clientX - startMouseX;
 
-      if(c==="js-top") {
+      if(c==="draggable"){
+        targetElement.style.top = startTop + distanceY + "px";
+        targetElement.style.left = startLeft + distanceX + "px";
+      }
+      else if(c==="js-top") {
         targetElement.style.top = startTop + distanceY + "px";
         targetElement.style.height = sizeTarget.height - distanceY + "px";
       }
       else if(c==="js-bottom") targetElement.style.height = 
         sizeTarget.height + distanceY +"px";
     
-      if(c==="js-left") {
+      else if(c==="js-left") {
         targetElement.style.left = startLeft + distanceX + "px";
         targetElement.style.width = sizeTarget.width - distanceX + "px"
       }
@@ -278,8 +215,94 @@ resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
     
     localStorage.setItem(`${storageName}Size`,JSON.stringify(Size));
   });
-})
-);
+}
+//variable global
+
+
+//-----------------------------------elements-------------------------------------------------------------
+const extendableElementList = document.querySelectorAll('[data-type="extendable"]');
+const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
+const allSelector = document.querySelectorAll('.selector');
+//hidden all selector's item with depencity
+allSelector.forEach(s=>{
+  const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
+  if(selectorBox.dataset.depencityid) {
+    for(target of selectorBox.children) {
+      //don't add hidden to all
+      if(target.dataset.type!=="all") target.classList.add('hidden');
+    }
+  }
+});
+
+
+
+
+//-----------------------------------extendableBox--------------------------------------------------------
+extendedBox.forEach(box=>box.classList.add("hidden"));
+
+
+extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
+  event.stopPropagation();
+  const action = trigger.dataset.action;
+
+  let targetBox;
+  if(trigger&&trigger.dataset.openboxid){
+    let count = 0;
+    for(box of extendedBox){
+      if(trigger.dataset.openboxid===box.dataset.targetboxid) {
+        targetBox = box;
+        count++;
+      }
+      if(count>1){console.warn('data-openboxid can only exist one per data-type="extendedBox!"');break;}
+    }
+  } else targetBox = trigger.parentNode.querySelector('[data-type="extendedBox"]');
+  if(targetBox) targetBox.isExtended = !targetBox.isExtended;
+  else{console.warn('cannot find element with data-type="extendedBox"')}
+
+  let targetElement =[];
+  
+  if(action === "open-menu"){
+    targetElement = [document.body.querySelector('[data-for="menu"]')];
+    const resizedMenuWidth = JSON.parse(localStorage.getItem('menuSize'));
+    if(resizedMenuWidth) targetElement[0].style.width = resizedMenuWidth.width;
+  }
+  else if(action==="open-selector") {
+    const parentElement = trigger.parentNode;
+    const itemBox = parentElement.querySelector('[data-type="extendedBox"]');
+    if(!trigger.initialized) {
+      AddSelectEvent(parentElement,itemBox);
+      trigger.initialized = true;
+    }
+    if(itemBox.dataset.depencityid) targetElement = Array.from(GetDepencityTarget(itemBox));
+    targetElement.push(itemBox);
+  }
+  else if(action === "open-calculator"){
+    targetElement = [document.body.querySelector('[data-for="calculator"]')];
+  }
+
+
+  if(targetBox.isExtended){
+    targetElement.forEach(t => {t.classList.remove("hidden");});
+    document.body.addEventListener("click",ClearAllExtendedBox);
+  }else {
+    targetElement.forEach(t => {
+      t.classList.add("hidden");
+      t.style.width = "";
+    });
+  }
+  }
+));
+
+
+
+
+
+//-------------------------------------------resizer&&draggable---------------------------------------------------------------------------
+const resizers = document.querySelectorAll('.resizer');
+const draggable = document.querySelectorAll('.draggable');
+
+resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>FollowMouseChange(event,resizerEl)));
+draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(event,El)));
 
 //resize to default
 resizers.forEach(resizerEl=>resizerEl.addEventListener("dblclick", event=>{
