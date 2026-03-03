@@ -71,7 +71,7 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .selecting-itens{
   background-color: rgb(0, 0, 0);
   cursor: pointer;
-  color:white
+  color:white;
 }
 
 /* ------------------button css ----------------------*/

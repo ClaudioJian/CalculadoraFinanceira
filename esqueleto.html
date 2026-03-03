@@ -32,13 +32,20 @@
           <div class="instrucao i4">Prazo</div>
           <div class="instrucao i5">Tipo de gráfico</div>
         </div>
-        <!-- Nota: precisamos adicionar no javascript a opção de deixar desligado enquanto não selecionar nenhum dos 2(inves/impos)--> 
-        <!--data-targetID: other with same data-targetID will grab selector with data-for="filter"
-          se selector tem data-for="filter" -> só pode existir um elemento abaixo dele
+
+        <!-- Instrução para criar selector
+          1. somente elementos interno do selector e interno do css-container-itens com data-type iguais serão visível
+          2. data-depencityID: busca o data-type e mostra somente o itens com mesmo data-type
+          3. data-filterID: deixa os itens com mesma data-depencity mostrar itens com mesmo data-type
+          4. se tem data-depencityID, deve colocar <div></div> sem nenhum conteúdo
+          5. se selector tem data-type="extendable" -> só pode existir um elemento abaixo dele, coloque <div></div> vazio
+          6. para selector sem depedêcia com outro, não coloca data-depencity
+          7. data-order deve ser diferente para mesmo selector(para diferentes selector, pode repetir)
+          8. data-type="all" mostra todos(work in progress)
         -->
         <div class="selector-container s1">
-          <div class="selector" data-action="open-selector" data-type="extendable" data-for="filter" data-targetID="0">
-            <div class="investimento" data-type="investimento" data-order="0" >Investimento</div>
+          <div class="selector" data-action="open-selector" data-type="extendable" data-filterID="0">
+            <div class="investimento" data-type="investimento" data-order="0">Investimento</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
@@ -47,25 +54,28 @@
         </div>
 
         <div class="selector-container s2">
-          <div class= "selector" data-action="open-selector" data-type="extendable" data-targetID="0">
-            <div class="investimento_A" data-type="investimento" data-order="0">Teste1</div>
+          <div class= "selector" data-action="open-selector" data-type="extendable" data-filterID="1">
+            <div></div>
           </div>
           <!--items-->
-          <div class="css-container-itens" data-type="extendedBox">
-            <div class="investimento_B" data-type="investimento" data-order="1">Teste2</div>
-            <div class="investimento_C" data-type="investimento" data-order="1">Teste2</div>
-            <div class="imposto_C" data-type="imposto" data-order="2">Teste3</div>
+          <div class="css-container-itens" data-type="extendedBox" data-depencityID="0">
+            <div class="investimento_B" data-type="investimento" data-order="1">investimento tipo B</div>
+            <div class="investimento_C" data-type="investimento" data-order="2">investimento tipo C</div>
+            <div class="imposto_A" data-type="imposto" data-order="3">Imposto tipo A</div>
+            <div class="imposto_B" data-type="imposto" data-order="4">Imposto tipo B</div>
           </div>
         </div>
 
         <div class="selector-container s3">
           <div class= "selector" data-action="open-selector" data-type="extendable">
-            <div class="imposto_A" data-order="0">teste0</div>
+            <div></div>
           </div>
           <!--items-->
-          <div class="css-container-itens" data-type="extendedBox">
-            <div class= "imposto_B" data-order="1">teste1</div>
-            <div class= "imposto_C" data-order="2">teste2</div>
+          <div class="css-container-itens" data-type="extendedBox" data-depencityID="0">
+            <div class= "imposto_B" data-type="imposto" data-order="1">imposto tipo A</div>
+            <div class= "imposto_B" data-type="imposto" data-order="2">imposto tipo B</div>
+            <div class= "imposto_C" data-type="investimento" data-order="3">imposto tipo C</div>
+            <div class="imposto_A" data-type="investimento" data-order="4">imposto tipo A</div>
           </div>
         </div>
 
@@ -75,12 +85,12 @@
 
         <div class="selector-container s4">
           <div class="selector" data-action="open-selector" data-type="extendable">
-            <div class="gráfico g1" data-order="0"></div>
+            <div class="gráfico g1" data-order="0">Test0</div>
           </div>
           <!--items-->
           <div class="css-container-itens" data-type="extendedBox">
-            <div class="gráfico g2" data-order="1"></div>
-            <div class="gráfico g3" data-order="2"></div>
+            <div class="gráfico g2" data-order="1">Test1</div>
+            <div class="gráfico g3" data-order="2">Test2</div>
           </div>
         </div>
 

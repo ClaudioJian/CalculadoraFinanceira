@@ -1,18 +1,36 @@
-//functions
+//functions js
+
+function ElementBubbleSort(elementList){
+  for(let i=0;i<elementList.length;i++){
+    for(let j=1;j<elementList.length-i;j++){
+      let before = elementList[j-1];
+      const beforeOrder = Number(before.dataset.order);
+      const currOrder = Number(elementList[j].dataset.order);
+
+      if(beforeOrder > currOrder) {
+        elementList[j-1] = elementList[j];
+        elementList[j] = before;
+      }else if(beforeOrder === currOrder) console.warn("data-order must be different!");
+    }
+  }
+  return elementList;
+}
+
+//function for html
 function ClearAllExtendedBox(event){
   event.stopPropagation();
 
   if(!event.target.closest('[data-type="extendedBox"]') && 
-      !event.target.closest('[data-type="extendable"]')){
-    extendedBox.forEach(box => {
+    !event.target.closest('[data-type="extendable"]')){
+      extendedBox.forEach(box => {
       if (!box.classList.contains('hidden')) {
         box.classList.add("hidden");
         box.style.width = "";
         box.style.height = "";
         box.style.left = "";
         box.style.right= "";
-      }
-    });
+        }
+      });
 
 
     extendableElementList.forEach(triggerElement=>{
@@ -23,7 +41,7 @@ function ClearAllExtendedBox(event){
   }
 };
 
-function RenderSelectingItem(itemBox, target){
+function RenderSelectingItem(itemBox){
   itemBox.addEventListener("mouseover",(event)=>{
     if(event.target.dataset.order!==undefined)
     event.target.classList.add("selecting-itens");
@@ -37,71 +55,114 @@ function RenderSelectingItem(itemBox, target){
   });
 }
 
-function RenderItens(parentElement,itemBox){
+function ClearDepedentSelector(firstID){
+  const blankElement = document.createElement("div");
+
+  for(const s of allSelector){
+    const targetBox = s.parentNode.querySelector('[data-type="extendedBox"]');
+    if(targetBox.dataset.depencityid===firstID) {
+      
+      //replace selector's content with blanck element
+      const selected = s.firstElementChild;
+      if(selected&&selected.dataset.order) {
+        targetBox.appendChild(selected);
+        s.appendChild(blankElement);
+
+        let elementList = Array.from(targetBox.children);
+
+        elementList = ElementBubbleSort(elementList);
+        elementList.forEach(el=>targetBox.appendChild(el));
+      }
+      
+      s.isExtended = false;
+      targetBox.classList.add('hidden');
+      //add hidden to all children with depencity
+      for(c of targetBox.children){c.classList.add('hidden')};
+      
+      if(s.dataset.filterID) ClearDepedentSelector(s.dataset.filterid);
+    }
+  }
+
+}
+
+function AddSelectEvent(parentElement,itemBox){
   //parentElement is trigger's parent
   const btnSelector = parentElement.querySelector('[data-action="open-selector"]');
-
-  //find what type is: investimento/imposto/etc
-  let targetType;
-  targetSelectorList.forEach( s =>{
-    if(btnSelector.dataset.targetID === s.dataset.targetID) 
-      targetType = s.firstElementChild;
-  });
-
-  if(!targetType) console.warn("no valid selector finded! add data-targetID to both selector!");
 
   //change selecting item visual
   RenderSelectingItem(itemBox);
 
   //select item-> change to main
   const SelectItem = (event)=>{
-
     const selected = event.target.closest('[data-order]');
+    if(!selected) return;
 
     //clean all elements
     const oldSelected = btnSelector.firstElementChild;
-    if(oldSelected) selected.replaceWith(oldSelected);
+    const isRealItem = oldSelected && oldSelected.dataset.order!==undefined;
+    
+    if(isRealItem) selected.replaceWith(oldSelected);
+    else btnSelector.innerHTML="";
     btnSelector.appendChild(selected);
 
     event.target.classList.remove("selecting-itens");
-    const elementList = Array.from(itemBox.children);
-    
+    let elementList = Array.from(itemBox.children);
+  
     //sort element by ID, using bubble sort
-    for(let i=0;i<elementList.length;i++){
-      for(let j=1;j<elementList.length-i;j++){
-        let before = elementList[j-1];
-        const beforeOrder = Number(before.dataset.order);
-        const currOrder = Number(elementList[j].dataset.order);
-
-        if(beforeOrder > currOrder) {
-          elementList[j-1] = elementList[j];
-          elementList[j] = before;
-        }else if(beforeOrder === currOrder) console.warn("data-order must be different!");
-      }
-    }
+    elementList = ElementBubbleSort(elementList);
     
-    elementList.forEach(el=>{
-        itemBox.appendChild(el);
-
-      });
-
-    itemBox.classList.add('hidden');
+    elementList.forEach(el=>itemBox.appendChild(el));
+    
     btnSelector.isExtended = false;
+    itemBox.classList.add('hidden');
+
+    if(btnSelector.dataset.filterid) {
+      const currID = btnSelector.dataset.filterid;
+      ClearDepedentSelector(currID);
+    }
   };
   
   itemBox.addEventListener("click",SelectItem);
 };
 
+function GetDepencityTarget(itemBox){
+  const depencityID = itemBox.dataset.depencityid;
+
+  for(s of allSelector){
+    if(s.dataset.filterid===depencityID) {
+      //get what is selected
+      const selected = s.firstElementChild;
+      let targetType;
+      if(selected) targetType = selected.dataset.type;
+      else console.warn('selector must contain at least one element, please add blank div!');
+
+      const targetElementList = itemBox.querySelectorAll(`[data-type="${targetType}"]`);
+      return targetElementList;
+    }
+  }
+
+  console.warn("cannot find selector with data-filterID, you must set filterID as same as depencityID:", depencityID, "from element - ", itemBox.closest('.selector-container'));
+}
+
 //variable global
 
 
-//elements
+//-----------------------------------elements-------------------------------------------------------------
 const extendableElementList = document.querySelectorAll('[data-type="extendable"]');
 const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
-const selector = document.querySelectorAll('.selector');
-const targetSelectorList = document.querySelectorAll('[data-for="filter"]');
+const allSelector = document.querySelectorAll('.selector');
+//hidden all selector's item with depencity
+allSelector.forEach(s=>{
+  const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
+  if(selectorBox.dataset.depencityid) {
+    for(target of selectorBox.children) target.classList.add('hidden');
+  }
+});
 
-//extendableBox
+
+
+
+//-----------------------------------extendableBox--------------------------------------------------------
 extendedBox.forEach(box=>box.classList.add("hidden"));
 
 extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
@@ -110,32 +171,41 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
 
   trigger.isExtended=!trigger.isExtended;
 
-  let targetElement;
+  let targetElement =[];
   
   if(action === "open-menu"){
-    targetElement = document.body.querySelector('[data-for="menu"]');
+    targetElement = [document.body.querySelector('[data-for="menu"]')];
     const resizedMenuWidth = JSON.parse(localStorage.getItem('menuSize'));
-    
-    if(resizedMenuWidth) targetElement.style.width = resizedMenuWidth.width;
+    if(resizedMenuWidth) targetElement[0].style.width = resizedMenuWidth.width;
   }
   else if(action==="open-selector") {
     const parentElement = trigger.parentNode;
-    targetElement = parentElement.querySelector('[data-type="extendedBox"]');
-    if(!trigger.initialized) RenderItens(parentElement,targetElement);
+    const itemBox = parentElement.querySelector('[data-type="extendedBox"]');
+    if(!trigger.initialized) {
+      AddSelectEvent(parentElement,itemBox);
+      trigger.initialized = true;
+    }
+    if(itemBox.dataset.depencityid) targetElement = Array.from(GetDepencityTarget(itemBox));
+    targetElement.push(itemBox);
   }
-
 
   if(trigger.isExtended){
-    targetElement.classList.remove("hidden");
+    targetElement.forEach(t => {t.classList.remove("hidden");});
     document.body.addEventListener("click",ClearAllExtendedBox);
   }else {
-    targetElement.classList.add("hidden");
-    targetElement.style.width = "";
+    targetElement.forEach(t => {
+      t.classList.add("hidden");
+      t.style.width = "";
+    });
   }
   }
-))
+));
 
-//resizer
+
+
+
+
+//-------------------------------------------resizer---------------------------------------------------------------------------
 const resizers = document.querySelectorAll('.resizer');
 
 resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
