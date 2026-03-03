@@ -77,9 +77,11 @@ function ClearDepedentSelector(firstID){
       s.isExtended = false;
       targetBox.classList.add('hidden');
       //add hidden to all children with depencity
-      for(c of targetBox.children){c.classList.add('hidden')};
+      for(c of targetBox.children){
+        if(c.dataset.type!=='all') c.classList.add('hidden')
+      };
       
-      if(s.dataset.filterID) ClearDepedentSelector(s.dataset.filterid);
+      if(s.dataset.filterid) ClearDepedentSelector(s.dataset.filterid);
     }
   }
 
@@ -130,13 +132,26 @@ function GetDepencityTarget(itemBox){
 
   for(s of allSelector){
     if(s.dataset.filterid===depencityID) {
-      //get what is selected
+      //get what is selected in selector matched
       const selected = s.firstElementChild;
+
       let targetType;
+      let targetElementList=[];
+
+      //find type
       if(selected) targetType = selected.dataset.type;
       else console.warn('selector must contain at least one element, please add blank div!');
 
-      const targetElementList = itemBox.querySelectorAll(`[data-type="${targetType}"]`);
+      if(selected.dataset.type==="all") targetElementList = itemBox.querySelectorAll('[data-order]');
+      //find in itemBox of current selector from data-type of element inside selector matched 
+      else{
+        targetElementList = itemBox.querySelectorAll(`[data-depencitytype="${targetType}"]`);
+        if(targetElementList){
+          targetElementList.forEach(el=>{
+            if(!el.dataset.depencitytype) console.warn("cannot find depencityID from - ",itemBox);
+          });
+        }
+      }
       return targetElementList;
     }
   }
@@ -155,7 +170,10 @@ const allSelector = document.querySelectorAll('.selector');
 allSelector.forEach(s=>{
   const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
   if(selectorBox.dataset.depencityid) {
-    for(target of selectorBox.children) target.classList.add('hidden');
+    for(target of selectorBox.children) {
+      //don't add hidden to all
+      if(target.dataset.type!=="all") target.classList.add('hidden');
+    }
   }
 });
 
