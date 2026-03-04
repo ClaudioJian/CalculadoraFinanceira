@@ -1,3 +1,13 @@
+//class
+class POS {
+  constructor(targetElement) {
+    this.top = targetElement.style.top;
+    this.left = targetElement.style.left;
+    this.width = targetElement.style.width;
+    this.height = targetElement.style.height;
+  }
+}
+
 //functions js
 
 function ElementBubbleSort(elementList){
@@ -163,7 +173,8 @@ function returnPos(targetElement) {
   const left = parseFloat(targetElement.style.left) || 0;
   const top = parseFloat(targetElement.style.top) || 0;
   const currSize = targetElement.getBoundingClientRect();
-  
+  const btnTarget = targetElement.querySelector('[data-action="open-calculator"]');
+  const btnSize = btnTarget.getBoundingClientRect()||0;
 
 
   if (left < 0) targetElement.style.left = "0px";
@@ -171,9 +182,7 @@ function returnPos(targetElement) {
     
     targetElement.style.left = `${window.innerWidth - currSize.width}px`;
   }
-  if (top < 0) {
-    const btnTarget = targetElement.querySelector('[data-action="open-calculator"]');
-    const btnSize = btnTarget.getBoundingClientRect()||0;
+  if ((top - btnSize.height) < 0) {
     targetElement.style.top = `${btnSize.height}px`;
   }
   else if(top+currSize.height>=window.innerHeight) {
@@ -229,15 +238,53 @@ function FollowMouseChange(event,El){
     window.removeEventListener("mouseup",Release);
     returnPos(targetElement);
     
-    const Size = {
-      top:targetElement.style.top,
-      left:targetElement.style.left,
-      width: targetElement.style.width,
-      height:targetElement.style.height
-    };
+    const size = new POS(targetElement);
     
-    localStorage.setItem(`${storageName}Size`,JSON.stringify(Size));
+    localStorage.setItem(`${storageName}Size`,JSON.stringify(size));
   });
+}
+
+function ResetPos(El,originalPos){
+  const targetElement = El.closest('[data-type="extendedBox"]');
+  const classes = El.classList;
+
+  const distanceTop = -1 * parseFloat(targetElement.style.top)||0;
+  const distanceleft = -1 * parseFloat(targetElement.style.left)||0;
+  const currSize = targetElement.getBoundingClientRect();
+  const storageName = targetElement.dataset.for;
+  let setting = JSON.parse(localStorage.getItem(`${storageName}Size`))||{};
+
+  classes.forEach(c=>{
+    if(c === "js-top") {
+      targetElement.style.top = originalPos.top;
+      targetElement.style.height = currSize.height - distanceTop +"px";
+
+      delete setting.top;
+      setting.height = targetElement.style.height;
+    }
+    else if(c === "js-bottom") {
+      targetElement.style.height = "";
+      const resetSize = targetElement.getBoundingClientRect();
+      targetElement.style.height = resetSize.height + distanceTop +"px";
+      setting.height = targetElement.style.height;
+    }
+
+    if(c === "js-left") {
+      targetElement.style.left = originalPos.left;
+      targetElement.style.width= currSize.width - distanceleft +"px";
+
+      delete setting.left;
+      setting.width = targetElement.style.width;
+    }
+    else if(c === "js-right") {
+      targetElement.style.width ="";
+      const resetSize = targetElement.getBoundingClientRect();
+      targetElement.style.width = resetSize.width + distanceleft +"px";
+      setting.width = targetElement.style.width;
+    }
+  });
+
+  localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
 }
 //variable global
 
@@ -320,7 +367,7 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
   }else {
     targetElement.forEach(t => {
       t.classList.add("hidden");
-      t.style.width = "";
+      if(action==="open-menu") t.style.width='';
     });
   }
   }
@@ -334,50 +381,20 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
 const resizers = document.querySelectorAll('.resizer');
 const draggable = document.querySelectorAll('.draggable');
 
-resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>FollowMouseChange(event,resizerEl)));
+resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
+  //start pos
+  const targetElement = resizerEl.closest('[data-type="extendedBox"]');
+  const startPos = new POS(targetElement);
+
+  FollowMouseChange(event,resizerEl);
+
+  //resize to default
+  if(!resizerEl.isInitialized){
+      resizerEl.addEventListener('dblclick',()=>{ResetPos(resizerEl,startPos)});
+      resizerEl.isInitialized = true;
+    }
+  }
+));
+
 draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(event,El)));
 
-//resize to default
-resizers.forEach(resizerEl=>resizerEl.addEventListener("dblclick", event=>{
-  const targetElement = resizerEl.parentNode;
-  const classes = resizerEl.classList;
-
-  const distanceTop = -1 * parseFloat(targetElement.style.top)||0;
-  const distanceleft = -1 * parseFloat(targetElement.style.left)||0;
-  const currSize = targetElement.getBoundingClientRect();
-  const storageName = targetElement.dataset.for;
-  let setting = JSON.parse(localStorage.getItem(`${storageName}Size`))||{};
-
-  classes.forEach(c=>{
-    if(c === "js-top") {
-      targetElement.style.top ="";
-      targetElement.style.height = currSize.height - distanceTop +"px";
-
-      delete setting.top;
-      setting.height = targetElement.style.height;
-    }
-    else if(c === "js-bottom") {
-      targetElement.style.height = "";
-      const resetSize = targetElement.getBoundingClientRect();
-      targetElement.style.height = resetSize.height + distanceTop +"px";
-      setting.height = targetElement.style.height;
-    }
-
-    if(c === "js-left") {
-      targetElement.style.left ="";
-      targetElement.style.width= currSize.width - distanceleft +"px";
-
-      delete setting.left;
-      setting.width = targetElement.style.width;
-    }
-    else if(c === "js-right") {
-      targetElement.style.width ="";
-      const resetSize = targetElement.getBoundingClientRect();
-      targetElement.style.width = resetSize.width + distanceleft +"px";
-      setting.width = targetElement.style.width;
-    }
-  });
-
-  localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
-}
-));
