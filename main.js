@@ -159,6 +159,23 @@ function GetDepencityTarget(itemBox){
   console.warn("cannot find selector with data-filterID, you must set filterID as same as depencityID:", depencityID, "from element - ", itemBox.closest('.selector-container'));
 }
 
+function returnPos(targetElement) {
+  const left = parseFloat(targetElement.style.left) || 0;
+  const top = parseFloat(targetElement.style.top) || 0;
+  const currSize = targetElement.getBoundingClientRect();
+
+
+  if (left < 0) targetElement.style.left = "0px";
+  else if(left+currSize.width>=window.innerWidth) {
+    
+    targetElement.style.left = `${window.innerWidth - currSize.width}px`;
+  }
+  if (top < 0) targetElement.style.top = "0px";
+  else if(top+currSize.height>=window.innerHeight) {
+    targetElement.style.top = `${window.innerHeight - currSize.height}px`;
+  }
+}
+
 function FollowMouseChange(event,El){
   event.preventDefault();
   document.body.removeEventListener("click",ClearAllExtendedBox);
@@ -205,6 +222,7 @@ function FollowMouseChange(event,El){
   document.body.addEventListener("mouseup",function Release(){
     document.body.removeEventListener("mousemove",moving);
     document.body.removeEventListener("mouseup",Release);
+    returnPos(targetElement);
     
     const Size = {
       top:targetElement.style.top,
@@ -224,6 +242,8 @@ const extendableElementList = document.querySelectorAll('[data-type="extendable"
 const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
 const allSelector = document.querySelectorAll('.selector');
 //hidden all selector's item with depencity
+
+//-----------------------------------elements changes---------------------------------------------------------------
 allSelector.forEach(s=>{
   const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
   if(selectorBox.dataset.depencityid) {
@@ -234,6 +254,14 @@ allSelector.forEach(s=>{
   }
 });
 
+//centering calculator
+ window.addEventListener('load',()=>{
+  const calculator = document.querySelector('[data-for="calculator"]');
+  const calcSize = calculator.getBoundingClientRect();
+
+  calculator.style.top = (window.innerHeight/2) - (calcSize.height/2) +'px';
+  calculator.style.left = (window.innerWidth/2) - (calcSize.width/2) +'px';
+});
 
 
 
