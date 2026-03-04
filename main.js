@@ -1,10 +1,11 @@
 //class
 class POS {
-  constructor(targetElement) {
+  constructor(targetElement,resizedSize={}) {
     this.top = targetElement.style.top;
     this.left = targetElement.style.left;
     this.width = targetElement.style.width;
     this.height = targetElement.style.height;
+    this.resizedSize = resizedSize;
   }
 }
 
@@ -35,12 +36,9 @@ function ClearAllExtendedBox(event){
       extendedBox.forEach(box => {
       if (!box.classList.contains('hidden')) {
         box.classList.add("hidden");
-        box.style.width = "";
-        box.style.height = "";
-        box.style.left = "";
-        box.style.right= "";
-        }
-      });
+        if(box.dataset.for==='menu') box.style.width ='';
+      }
+    });
 
 
     extendedBox.forEach(itemBox=>{
@@ -170,35 +168,48 @@ function GetDepencityTarget(itemBox){
 }
 
 function returnPos(targetElement) {
+  if(!targetElement) return;
   const left = parseFloat(targetElement.style.left) || 0;
   const top = parseFloat(targetElement.style.top) || 0;
   const currSize = targetElement.getBoundingClientRect();
-  const btnTarget = targetElement.querySelector('[data-action="open-calculator"]');
-  const btnSize = btnTarget.getBoundingClientRect()||0;
+  const elementDataFor = targetElement.closest('[data-for]');
+  let btnSize = 0;
+  let btnTarget;
+  if(elementDataFor&&elementDataFor==='calculator'){
+    btnTarget = targetElement.querySelector('[data-action="open-calculator"]');
+  }
+  
+  btnSize = btnTarget?btnTarget.getBoundingClientRect():{};
 
 
   if (left < 0) targetElement.style.left = "0px";
   else if(left+currSize.width>=window.innerWidth) {
-    
     targetElement.style.left = `${window.innerWidth - currSize.width}px`;
   }
   if ((top - btnSize.height) < 0) {
-    targetElement.style.top = `${btnSize.height}px`;
+    targetElement.style.top = `${btnSize?btnSize.height:0}px`;
   }
   else if(top+currSize.height>=window.innerHeight) {
     targetElement.style.top = `${window.innerHeight - currSize.height}px`;
   }
 }
 
+
+
 function FollowMouseChange(event,El){
   event.preventDefault();
-  document.body.removeEventListener("click",ClearAllExtendedBox);
 
   const targetElement = El.closest('[data-type="extendedBox"]');
   const classes = El.classList;
   const storageName = targetElement.dataset.for;
 
   const sizeTarget = targetElement.getBoundingClientRect();
+  const resizedSize = {
+    distTop:0,
+    distLeft:0,
+    distRight:0,
+    distBottom:0
+  };
 
   const startTop = (parseFloat(targetElement.style.top)||0);
   const startLeft = (parseFloat(targetElement.style.left)||0);
@@ -217,19 +228,24 @@ function FollowMouseChange(event,El){
       else if(c==="js-top") {
         targetElement.style.top = startTop + distanceY + "px";
         targetElement.style.height = sizeTarget.height - distanceY + "px";
+        resizedSize.distTop = -distanceY;
       }
-      else if(c==="js-bottom") targetElement.style.height = 
-        sizeTarget.height + distanceY +"px";
+      else if(c==="js-bottom"){
+        targetElement.style.height = sizeTarget.height + distanceY +"px";
+        resizedSize.distBottom = distanceY;
+      }
     
       else if(c==="js-left") {
         targetElement.style.left = startLeft + distanceX + "px";
-        targetElement.style.width = sizeTarget.width - distanceX + "px"
+        targetElement.style.width = sizeTarget.width - distanceX + "px";
+        resizedSize.distLeft = -distanceX;
       }
-      else if(c==="js-right") targetElement.style.width = 
-        sizeTarget.width + distanceX +"px";
+      else if(c==="js-right"){
+        targetElement.style.width = sizeTarget.width + distanceX +"px";
+        resizedSize.distRight = distanceX;
+      }
     });
   };
-
 
   document.body.addEventListener("mousemove",moving);
 
@@ -237,53 +253,71 @@ function FollowMouseChange(event,El){
     document.body.removeEventListener("mousemove",moving);
     window.removeEventListener("mouseup",Release);
     returnPos(targetElement);
-    
-    const size = new POS(targetElement);
+
+    const oldSizeStr = localStorage.getItem(`${storageName}Size`);
+    const oldSize = oldSizeStr ? JSON.parse(oldSizeStr):null;
+    if(oldSize&&oldSize.resizedSize){
+      resizedSize.distTop += oldSize.resizedSize.distTop;
+      resizedSize.distBottom += oldSize.resizedSize.distBottom;
+      resizedSize.distLeft += oldSize.resizedSize.distLeft;
+      resizedSize.distRight += oldSize.resizedSize.distRight;
+    }
+    const size = new POS(targetElement,resizedSize);
     
     localStorage.setItem(`${storageName}Size`,JSON.stringify(size));
   });
 }
 
-function ResetPos(El,originalPos){
+function ResetPos(El){
   const targetElement = El.closest('[data-type="extendedBox"]');
   const classes = El.classList;
 
-  const distanceTop = -1 * parseFloat(targetElement.style.top)||0;
-  const distanceleft = -1 * parseFloat(targetElement.style.left)||0;
-  const currSize = targetElement.getBoundingClientRect();
   const storageName = targetElement.dataset.for;
-  let setting = JSON.parse(localStorage.getItem(`${storageName}Size`))||{};
+  let setting = JSON.parse(localStorage.getItem(`${storageName}Size`));
+  if(!setting) return;
+
+  const resized = setting.resizedSize||{};
+
+  const moveTop = resized.distTop||0;
+  const moveBottom = resized.distBottom||0;
+  const moveRight = resized.distRight||0;
+  const moveLeft = resized.distLeft||0;
+
+  console.log(moveTop);
 
   classes.forEach(c=>{
     if(c === "js-top") {
-      targetElement.style.top = originalPos.top;
-      targetElement.style.height = currSize.height - distanceTop +"px";
+      targetElement.style.top = (parseFloat(setting.top) + moveTop) + 'px';
+      targetElement.style.height = (parseFloat(setting.height) - moveTop) + "px";
 
-      delete setting.top;
       setting.height = targetElement.style.height;
+      setting.top = targetElement.style.top;
+      resized.distTop = 0;
     }
     else if(c === "js-bottom") {
-      targetElement.style.height = "";
-      const resetSize = targetElement.getBoundingClientRect();
-      targetElement.style.height = resetSize.height + distanceTop +"px";
+      targetElement.style.height = (parseFloat(setting.height) - moveBottom) +"px";
+
       setting.height = targetElement.style.height;
+      resized.distBottom = 0;
     }
 
     if(c === "js-left") {
-      targetElement.style.left = originalPos.left;
-      targetElement.style.width= currSize.width - distanceleft +"px";
+      targetElement.style.left = (parseFloat(setting.left) + moveLeft) + 'px';
+      targetElement.style.width = (parseFloat(setting.width) - moveLeft) + "px";
 
-      delete setting.left;
       setting.width = targetElement.style.width;
+      setting.left = targetElement.style.left;
+      resized.distLeft = 0;
     }
     else if(c === "js-right") {
-      targetElement.style.width ="";
-      const resetSize = targetElement.getBoundingClientRect();
-      targetElement.style.width = resetSize.width + distanceleft +"px";
+      targetElement.style.width = (parseFloat(setting.width) - moveRight) +"px";
+
       setting.width = targetElement.style.width;
+      resized.distRight = 0;
     }
   });
 
+  setting.resizedSize = resized;
   localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
 }
 //variable global
@@ -293,9 +327,12 @@ function ResetPos(El,originalPos){
 const extendableElementList = document.querySelectorAll('[data-type="extendable"]');
 const extendedBox = document.querySelectorAll('[data-type="extendedBox"]');
 const allSelector = document.querySelectorAll('.selector');
-//hidden all selector's item with depencity
+
+const resizers = document.querySelectorAll('.resizer');
+const draggable = document.querySelectorAll('.draggable');
 
 //-----------------------------------elements changes---------------------------------------------------------------
+//hidden all selector's item with depencity
 allSelector.forEach(s=>{
   const selectorBox = s.parentNode.querySelector('[data-type="extendedBox"]');
   if(selectorBox.dataset.depencityid) {
@@ -308,11 +345,28 @@ allSelector.forEach(s=>{
 
 //centering calculator
  window.addEventListener('load',()=>{
-  const calculator = document.querySelector('[data-for="calculator"]');
-  const calcSize = calculator.getBoundingClientRect();
+  resizers.forEach(s=>{
+    const elementFind = s.closest('[data-for]');
+    const target = elementFind.dataset.for;
+    if(elementFind&&target!=='menu') {
+      const targetJSON = JSON.parse(localStorage.getItem(`${target}Size`));
+      if(targetJSON){
+        elementFind.style.top = targetJSON.top;
+        elementFind.style.left = targetJSON.left;
+        elementFind.style.width = targetJSON.width;
+        elementFind.style.height = targetJSON.height;
+      }
+    }else return;
+  });
 
-  calculator.style.top = (window.innerHeight/2) - (calcSize.height/2) +'px';
-  calculator.style.left = (window.innerWidth/2) - (calcSize.width/2) +'px';
+  const isMovedCalc = localStorage.getItem('calculatorSize');
+  if(!isMovedCalc){
+    const calculator = document.querySelector('[data-for="calculator"]');
+    const calcSize = calculator.getBoundingClientRect();
+
+    calculator.style.top = (window.innerHeight/2) - (calcSize.height/2) +'px';
+    calculator.style.left = (window.innerWidth/2) - (calcSize.width/2) +'px';
+  }
 });
 
 
@@ -378,23 +432,15 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
 
 
 //-------------------------------------------resizer&&draggable---------------------------------------------------------------------------
-const resizers = document.querySelectorAll('.resizer');
-const draggable = document.querySelectorAll('.draggable');
 
-resizers.forEach(resizerEl=>resizerEl.addEventListener("mousedown", event=>{
-  //start pos
-  const targetElement = resizerEl.closest('[data-type="extendedBox"]');
-  const startPos = new POS(targetElement);
 
-  FollowMouseChange(event,resizerEl);
+resizers.forEach(resizerEl=>{
+  resizerEl.addEventListener("mousedown", event=>FollowMouseChange(event,resizerEl))
 
   //resize to default
-  if(!resizerEl.isInitialized){
-      resizerEl.addEventListener('dblclick',()=>{ResetPos(resizerEl,startPos)});
-      resizerEl.isInitialized = true;
-    }
+  resizerEl.addEventListener('dblclick',()=>{ResetPos(resizerEl)});
   }
-));
+);
 
 draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(event,El)));
 
