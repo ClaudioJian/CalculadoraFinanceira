@@ -163,6 +163,7 @@ function returnPos(targetElement) {
   const left = parseFloat(targetElement.style.left) || 0;
   const top = parseFloat(targetElement.style.top) || 0;
   const currSize = targetElement.getBoundingClientRect();
+  
 
 
   if (left < 0) targetElement.style.left = "0px";
@@ -170,7 +171,11 @@ function returnPos(targetElement) {
     
     targetElement.style.left = `${window.innerWidth - currSize.width}px`;
   }
-  if (top < 0) targetElement.style.top = "0px";
+  if (top < 0) {
+    const btnTarget = targetElement.querySelector('[data-action="open-calculator"]');
+    const btnSize = btnTarget.getBoundingClientRect()||0;
+    targetElement.style.top = `${btnSize.height}px`;
+  }
   else if(top+currSize.height>=window.innerHeight) {
     targetElement.style.top = `${window.innerHeight - currSize.height}px`;
   }
@@ -219,9 +224,9 @@ function FollowMouseChange(event,El){
 
   document.body.addEventListener("mousemove",moving);
 
-  document.body.addEventListener("mouseup",function Release(){
+  window.addEventListener("mouseup",function Release(){
     document.body.removeEventListener("mousemove",moving);
-    document.body.removeEventListener("mouseup",Release);
+    window.removeEventListener("mouseup",Release);
     returnPos(targetElement);
     
     const Size = {
