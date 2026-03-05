@@ -9,26 +9,55 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden; 
+  position: relative;
 }
 
 /* ------------------selector css ----------------------*/
+
+/* este é para itens pode na posição correta*/
+.selector-container{
+  position: absolute;
+  margin-top: 100px;
+}
+
 .selector {
   background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
   width: 15vw;
   height: 10vh;
-  position:static;
   border-radius: 15% 15% 15% 15%;
   border-style: solid;
   top: 75px;
   left: 10px;
   text-align: center;
+  border-style: 15px rgb(169, 22, 22) solid 100%;
 }
 
 .s1 {
+  background-color:rgb(255, 255, 255);
+  left:10%;
+  /*eu esqueci como muda as bordas*/
+}
+
+.s2 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
+  background-color:rgb(255, 255, 255);
+  left:30%;
+  /*eu esqueci como muda as bordas*/
+}
+
+.s3 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgb(255, 255, 255);
+  left:50%;
+  /*eu esqueci como muda as bordas*/
+}
+
+.s4 {
+  border-style: 500px rgb(169, 22, 22) solid 100%;
+  background-color:rgb(255, 255, 255);
+  left:70%;
   /*eu esqueci como muda as bordas*/
 }
 
@@ -53,13 +82,15 @@ body {
 /*items do selectores*/
 .css-container-itens{
   position: absolute;
+  top:100%;
 }
 
 /*modifica visualização do elemento nos itens quando mouse está em cima
 vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .selecting-itens{
-  /*background-color: aliceblue;*/
+  background-color: rgb(0, 0, 0);
   cursor: pointer;
+  color:white;
 }
 
 /* ------------------button css ----------------------*/
@@ -78,6 +109,7 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 .button:hover  {
   transform:scale(1.1);
+  background-color: rgba(24, 182, 82, 0.882);
   background-color: rgba(24, 182, 82, 0.882)
 }
 
@@ -93,8 +125,60 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 .reset {
   position:absolute;
+ left:64%;
+}
+
+.instrucoes {
+  position:static;
+  display:flex;
+}
+
+/*-------------------------instrução---------------------------*/
+.instrucao {
+  position:absolute;
+  min-width:20px;
+  max-width:300px;
+  min-height:17px;
+  display:flex;
+  flex-wrap:wrap;
+  background:hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color:rgb(15, 32, 80);
+  font: bold 13px Arial;
+  overflow-wrap: break-word;
+}
+
+
+.i1 {
+  position:absolute;
+  left:10%;
+}
+
+.i2 {
+  position:absolute;
+  left:30%;
+}
+
+.i3 {
+  position:absolute;
+  left:50%;
+}
+
+.i4 {
+  position:absolute;
+  left:70%;
+}
+
+.i5 {
+  position:absolute;
+  left:10%;
+  top:40%;
   left:65%;
 }
+
+/*inicio parte css para javascript*/
 
 /*tipo de botão para extender ou aparecer pop-up*/
 [data-type="extendable"]{
@@ -102,27 +186,114 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 }
 
 /* ------------------menu css----------------------*/
+.css-menu-container{
+  display: flex;
+  position: fixed;
+  top:0;
+  height: fit-content;
+  z-index: 9999;
+}
 
 /*imagem do menu que expande quadrado*/
 .css-img-menu{
-  background-color: transparent;
+  background: transparent;
 }
 
 /*quadrado aparecida após clicar o bottom*/
 .css-menu{
-  top:0%;
-  position: fixed;
-  height:100%;
-  /*width:90px;*/
+  height: 100vh;
+  /*min-width: px;
+  width:90px;*/
   background-color: black;
-  display:flex;
-  z-index: 9999;
+  display:grid;
+  position: relative;
+}
+
+/*------------resizer--------------------------------*/
+/*resizer: must inside of data-type="extendedBox"*/
+.resizer{
+  background-color: transparent;
+  position: absolute;
+}
+.resizer:hover{
+  background-color: rgba(255, 255, 255, 0.76);
+}
+
+.resizer.js-left,
+.resizer.js-right{
+  cursor:ew-resize;
+  width: 7px;
+  height: 100%;
+}
+
+.resizer.js-top,
+.resizer.js-bottom{
+  cursor:ns-resize;
+  width: 100%;
+  height: 7px;
+}
+
+.resizer.js-left.js-top,
+.resizer.js-right.js-bottom
+{
+  cursor: nwse-resize;
+  width: 7px;
+  height: 7px;
+}
+
+.resizer.js-right.js-top,
+.resizer.js-left.js-bottom{
+  cursor: nesw-resize;
+  width: 7px;
+  height: 7px;
+  background-color: transparent;
+}
+
+.resizer.js-top{top:-5px;}
+.resizer.js-bottom{bottom:-5px;}
+.resizer.js-left{left:-5px;}
+.resizer.js-right{right:-5px;}
+
+/*-------------------draggable-------------------------*/
+.draggable{
+  background-color: aliceblue;
+  border: 2px solid black;
+  height:60px;
+  user-select: none;
 }
 
 /* ------------------JS utilidade ----------------------*/
 .hidden{
+  width: 0;
+  height: 0;
   opacity: 0%;
   visibility: hidden;
+}
+
+
+
+
+.css-img-calculator{
+  left:100px;
+}
+
+.btn-calculator-out{
+  height: 60px;
+}
+
+.btn-calculator-inside{
+  height: 60px;
+  right: 0;
+  top:-60px;
+  position: absolute;
+}
+
+.calculator-container{
+  position: absolute;
+  z-index: 3000;
+  width: 300px;
+  height: 200px;
+  background-color: aqua;
 }
 
 /* ------------------imagem temporária ----------------------*/
@@ -131,4 +302,8 @@ img[src="image/img_placeholder.jpg"]{
   height : 50px;
   background-color: transparent;
   border-radius: 10px;
+  border: 5px;
+  border-color: black;
+  border-style:solid;
+}
 }
