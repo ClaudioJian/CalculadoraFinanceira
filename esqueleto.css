@@ -61,6 +61,24 @@ body {
   /*eu esqueci como muda as bordas*/
 }
 
+.s2 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s3 {
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
+.s4 {
+  border-style: 500px rgb(169, 22, 22) solid 100%;
+  background-color:rgba(25, 205, 91, 0.578);
+  /*eu esqueci como muda as bordas*/
+}
+
 /*items do selectores*/
 .css-container-itens{
   position: absolute;
@@ -92,6 +110,7 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .button:hover  {
   transform:scale(1.1);
   background-color: rgba(24, 182, 82, 0.882);
+  background-color: rgba(24, 182, 82, 0.882)
 }
 
 .calc {
@@ -156,6 +175,7 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
   position:absolute;
   left:10%;
   top:40%;
+  left:65%;
 }
 
 /*inicio parte css para javascript*/
@@ -285,4 +305,5 @@ img[src="image/img_placeholder.jpg"]{
   border: 5px;
   border-color: black;
   border-style:solid;
+}
 }
