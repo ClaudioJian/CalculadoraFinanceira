@@ -4,9 +4,23 @@
         if(!is_array($innerElements)) {echo $innerElements;return;}
         //element
         else {
+            //avoid invalid elements insert and avoid void element
+            $allowed_element = ['div', 'span', 'p', 'a', 'h1', 'h2', 'img', 'input', 'button'];
+            $void_elements = ['img', 'input', 'br', 'hr'];
+
             foreach($innerElements as $el){
                 $el_type = $el['element_type']??'';
-                if(empty($el_type)) echo 'you must define type of element!';
+                if(empty($el_type)) {
+                    echo 'you must define type of element!';
+                    continue;
+                    }
+
+                //check if element is valid
+                if(!in_array($el_type, $allowed_element)){
+                    echo "";
+                    continue;
+                }
+                
                 $innerText = key_empty($el['innerText']??'');
                 //tags is object {"tag":"value for tag", "tag2":...}
                 $tags = $el['tags']??[];
@@ -15,25 +29,27 @@
                 $innerEl = $el['innerElements']??'';
 
                 echo '<'.$el_type.$class;
-
-                if(!empty($tags)) {
+                    if(!empty($tags)) {
                     //loop throught array to echo all tags
                     foreach($tags as $k=>$v) echo key_empty($v,$k);
-                };
-                
-                echo '>';
+                    };
 
-                //check if has children
-                create_children($innerEl);
-
-                echo $innerText.'</'.$el_type.'>';
+                //void element don't need innerText and child inside
+                if(in_array($el_type, $void_elements)) echo ' />';
+                else{
+                    //normal element
+                    //check if has children
+                    echo ' >';
+                    create_children($innerEl);
+                echo  $innerText.'</'.$el_type.'>';
+                }
             }
         }
     }
 
     function key_empty($key,$tag_to_add = null){
         $key = strtolower($key);
-        if($key==''||$key==null||$key==false||$key=='none') return '';
+        if($key===''||$key==null||$key=='none') return '';
         else {
             if($tag_to_add) $key = ' ' . $tag_to_add . '="' . $key . '" ';
             return $key;
@@ -81,8 +97,8 @@
 
                         //loop to get all information of selector, start with start_idx
                         for($count = 0; $count<$quant; $count++){
-                            $start_idx += $count;
-                            $target = $data[(string)$start_idx]??null;
+                            $current_idx = $start_idx + $count;
+                            $target = $data[(string)$current_idx]??null;
 
                             if($target){
                                 $class = key_empty($target['class']??'');
@@ -91,13 +107,44 @@
                                     //selector: item inside
                                     //data-filterid can not exist
                                     $filterID = key_empty($target['filterID']??'','data-filterid');
+                                    $depencityID = key_empty($target['depencityID']??'','data-depencityid');
+                                    
+                                    $itens = $target['itens']??[];
+                                    $default_selected = $target["default_selected"]??'';
+
                                     echo '<div class="selector" data-action="open-selector" data-type="extendable"'.$filterID.'">';
-                                        create_item($target["default_selected"]);
+                                        //if depencityID exist, this must be blank div. only create when equal none or empty str
+                                        if($depencityID===''||$depencityID=='none') create_item($default_selected);
+                                        else {
+                                            //if depencity exist but default_selected has something. also avoid it is empty
+                                            if(is_array($default_selected) && !empty($default_selected)){
+                                                //add new item inside of array $item with array $default_selected
+                                                $itens[] = $default_selected;
+                                                $data[(string)$current_idx]['itens'][] = $default_selected;
+                                                //delete what is in
+                                                $data[(string)$current_idx]['default_selected'] = '';
+                                                //save new itens into json. JSON_PRETTY_PRINT->new line and space, JSON_UNESCAPED_UNICODE make á avaible in json
+                                                file_put_contents($file_path,json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                                            }
+                                            echo '<div></div>';
+                                        }
+                                    echo '</div>';
+                                    //itens
+                                    $class = key_empty($data['item_class']??'','class');
+                                    
+                                    echo '<div'.$class.' data-type="extendedBox"'.$depencityID.'>';
+                                        //loop through array
+                                        
+                                        if(!empty($itens)&&is_array($itens)) {
+                                            foreach($itens as $i){
+                                                create_item($i);
+                                            }};   
                                     echo '</div>';
                                 echo '</div>';
                             ;}
                             else return;
                         }
+                        $element_list[$element_selected] += $quant;
                         break;
                 }
             }
