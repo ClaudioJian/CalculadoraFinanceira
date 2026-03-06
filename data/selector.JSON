@@ -1,0 +1,136 @@
+{
+    "selector_container_class":"selector-container",
+    "item_class":"css-container-itens",
+    "0":{
+        "class":"s1",
+        "filterID":"0",
+        "depencityID":"",
+        "default_selected":{
+            "class":"investimento",
+            "type":"investimento",
+            "depencitytype":"",
+            "order":0,
+            "innerElements":"investimento"
+            },
+        "itens":[{
+            "class":"imposto",
+            "type":"imposto",
+            "depencitytype":"",
+            "order":0,
+            "innerElements":"Imposto"
+            }]
+    },
+    "1":{
+        "class":"s2",
+        "filterID":"1",
+        "depencityID":"0",
+        "default_selected":"",
+        "itens":[{
+            "class":"",
+            "type":"all",
+            "depencitytype":"",
+            "order":0,
+            "innerElements":"Imposto"
+            },
+            {
+            "class":"investimento_B",
+            "type":"investimento_B",
+            "depencitytype":"investimento",
+            "order":1,
+            "innerElements":"investimento tipo B-need investimento"
+            },
+            {
+            "class":"investimento_C",
+            "type":"investimento_C",
+            "depencitytype":"investimento",
+            "order":2,
+            "innerElements":"investimento tipo C-need investimento"
+            },
+            {
+            "class":"imposto_A",
+            "type":"imposto_A",
+            "depencitytype":"imposto",
+            "order":3,
+            "innerElements":"Imposto tipo A-need imposto"
+            },
+            {
+            "class":"imposto_B",
+            "type":"imposto_B",
+            "depencitytype":"imposto",
+            "order":4,
+            "innerElements":"Imposto tipo B-need imposto"
+            }
+        ]
+    },
+
+    "2":{
+        "class":"s3",
+        "filterID":"",
+        "depencityID":"1",
+        "default_selected":"",
+        "itens":[{
+            "class":"imposto_F",
+            "type":"",
+            "depencitytype":"imposto_B",
+            "order":1,
+            "innerElements":"imposto tipo F-need imposto tipoB"
+            },
+            {
+            "class":"imposto_G",
+            "type":"",
+            "depencitytype":"imposto_A",
+            "order":1,
+            "innerElements":"imposto tipo G-need imposto tipoA"
+            },
+            {
+            "class":"investimento_C",
+            "type":"investimento_C",
+            "depencitytype":"investimento",
+            "order":2,
+            "innerElements":"investimento tipo C-need investimento"
+            },
+            {
+            "class":"investimento_C",
+            "type":"",
+            "depencitytype":"investimento_B",
+            "order":3,
+            "innerElements":"imposto tipo C-need investimento tipoB"
+            },
+            {
+            "class":"investimento_A",
+            "type":"",
+            "depencitytype":"investimento_B",
+            "order":4,
+            "innerElements":"imposto tipo A-need investimento tipoC"
+            }
+        ]
+    },
+
+    "3":{
+        "class":"s4",
+        "filterID":"",
+        "depencityID":"",
+        "default_selected":{
+            "class":"gráfico g1",
+            "type":"",
+            "depencitytype":"",
+            "order":0,
+            "innerElements":"Test0"
+            },
+        "itens":[{
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":1,
+            "innerElements":"Test1"
+            },
+            {
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":2,
+            "innerElements":"Test2"
+            }
+        ]
+    }
+}

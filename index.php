@@ -7,6 +7,11 @@
 <link rel="stylesheet" href="esqueleto.css"/>
   </head>
   <body>
+      <?php 
+        //copy and paste for functions
+        //current features(work in progress): create selector and calculator
+        include './processor/createCustomElement.php';
+       ?>
       <main>
         <!--menu-->
         <div class="css-menu-container">
@@ -57,7 +62,16 @@
 
 
         <!--selector-->
-        <!--data-order ordena os items conforme número-->
+        
+
+        <?php
+          //loadQuant tell how many element you want to load from there, data for element must placed in order
+          create_custom_element('selector',4);
+        ?>
+
+
+
+
         <div class="instrucoes">
           <div class="instrucao i1">O que seria?</div>
           <div class="instrucao i2">Tipo?</div>
@@ -77,6 +91,7 @@
           8. data-order deve ser diferente para mesmo selector(para diferentes selector, pode repetir)
           9. data-type="all" mostra todos, can only exist if it has data-type
           10.data-type só precisa existir se tem data-filterID
+          11. data-order ordena os items conforme número
         -->
         <div class="selector-container s1">
           <div class="selector" data-action="open-selector" data-type="extendable" data-filterID="0">
