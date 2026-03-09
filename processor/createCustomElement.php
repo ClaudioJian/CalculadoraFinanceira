@@ -1,5 +1,6 @@
 <?php
     function create_children($innerElements){
+        global $error_msg;
         //this is just text
         if(!is_array($innerElements)) {echo $innerElements;return;}
         //element
@@ -10,6 +11,7 @@
 
             foreach($innerElements as $el){
                 $el_type = $el['element_type']??'';
+                //check error
                 if(empty($el_type)) {
                     echo 'you must define type of element!';
                     continue;
@@ -17,7 +19,6 @@
 
                 //check if element is valid
                 if(!in_array($el_type, $allowed_element)){
-                    echo "";
                     continue;
                 }
                 
@@ -59,7 +60,7 @@
     function create_item($item_selected){
         // if item not specificted or not find, create blank div
         if(empty($item_selected)){
-            echo '<div></div>';
+            echo '<span></span>';
             return;
         }
 
@@ -70,9 +71,9 @@
 
         $innerElement = $item_selected['innerElements'];
 
-        echo '<div'.$class.$type.$depencity.$order.'>';
+        echo '<ul'.$class.$type.$depencity.$order.'>';
             create_children($innerElement);
-        echo '</div>';
+        echo '</ul>';
     }
 
     function create_custom_element($element_selected,$quant){
@@ -103,7 +104,7 @@
                             if($target){
                                 $class = key_empty($target['class']??'');
                                 //container
-                                echo '<div class="'. $data['selector_container_class'] .' '.$class.'">';
+                                echo '<section class="'. $data['selector_container_class'] .' '.$class.'">';
                                     //selector: item inside
                                     //data-filterid can not exist
                                     $filterID = key_empty($target['filterID']??'','data-filterid');
@@ -112,7 +113,7 @@
                                     $itens = $target['itens']??[];
                                     $default_selected = $target["default_selected"]??'';
 
-                                    echo '<div class="selector" data-action="open-selector" data-type="extendable"'.$filterID.'">';
+                                    echo '<button class="selector" data-action="open-selector" data-type="extendable"'.$filterID.'">';
                                         //if depencityID exist, this must be blank div. only create when equal none or empty str
                                         if($depencityID===''||$depencityID=='none') create_item($default_selected);
                                         else {
@@ -126,21 +127,21 @@
                                                 //save new itens into json. JSON_PRETTY_PRINT->new line and space, JSON_UNESCAPED_UNICODE make á avaible in json
                                                 file_put_contents($file_path,json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
                                             }
-                                            echo '<div></div>';
+                                            echo '<span></span>';
                                         }
-                                    echo '</div>';
+                                    echo '</button>';
                                     //itens
-                                    $class = key_empty($data['item_class']??'','class');
+                                        $class = key_empty($data['item_class']??'','class');
                                     
-                                    echo '<div'.$class.' data-type="extendedBox"'.$depencityID.'>';
+                                    echo '<nav'.$class.' data-type="extendedBox"'.$depencityID.'>';
                                         //loop through array
-                                        
                                         if(!empty($itens)&&is_array($itens)) {
                                             foreach($itens as $i){
+                                                //create <ul> list
                                                 create_item($i);
                                             }};   
-                                    echo '</div>';
-                                echo '</div>';
+                                    echo '</nav>';
+                                echo '</section>';
                             ;}
                             else return;
                         }

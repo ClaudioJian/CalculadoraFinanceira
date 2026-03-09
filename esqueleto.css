@@ -20,7 +20,7 @@ body {
   margin-top: 100px;
 }
 
-.selector {
+.selector{
   background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
@@ -35,47 +35,30 @@ body {
 }
 
 .s1 {
-  background-color:rgb(255, 255, 255);
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:transparent;
   left:10%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s2 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:30%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s3 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:50%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s4 {
   border-style: 500px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:70%;
-  /*eu esqueci como muda as bordas*/
-}
-
-.s2 {
-  border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
-  /*eu esqueci como muda as bordas*/
-}
-
-.s3 {
-  border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
-  /*eu esqueci como muda as bordas*/
-}
-
-.s4 {
-  border-style: 500px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
   /*eu esqueci como muda as bordas*/
 }
 
@@ -83,12 +66,20 @@ body {
 .css-container-itens{
   position: absolute;
   top:100%;
+  z-index: 300;
+}
+
+/*todo itens do selector*/
+.selector-container ul{
+  list-style-type: none;
+  padding: 0%;
+  margin: 0%;
 }
 
 /*modifica visualização do elemento nos itens quando mouse está em cima
 vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .selecting-itens{
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(55, 62, 119);
   cursor: pointer;
   color:white;
 }
@@ -270,8 +261,23 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
   visibility: hidden;
 }
 
+/*deleta esse quando passar para professor*/
+.btn-debug{
+  right: 0%;
+  position: absolute;
+  max-height: fit-content;
+  max-width: fit-content;
+  border:none;
+  background: none;
+}
 
-
+.debug-menu-container{
+  right: 0%;
+  position: fixed;
+  width: 60px;
+  height: 100%;
+  background-color: aliceblue;
+}
 
 .css-img-calculator{
   left:100px;

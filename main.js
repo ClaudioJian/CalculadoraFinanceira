@@ -344,7 +344,7 @@ allSelector.forEach(s=>{
 });
 
 //centering calculator
- window.addEventListener('load',()=>{
+window.addEventListener('load',()=>{
   resizers.forEach(s=>{
     const elementFind = s.closest('[data-for]');
     const target = elementFind.dataset.for;
@@ -378,6 +378,7 @@ extendedBox.forEach(box=>box.classList.add("hidden"));
 extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
   event.stopPropagation();
   const action = trigger.dataset.action;
+  
 
   let targetBox;
   if(trigger&&trigger.dataset.openboxid){
@@ -390,10 +391,11 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
       if(count>1){console.warn('data-openboxid can only exist one per data-type="extendedBox!"');break;}
     }
   } else targetBox = trigger.parentNode.querySelector('[data-type="extendedBox"]');
+
   if(targetBox) targetBox.isExtended = !targetBox.isExtended;
   else{console.warn('cannot find element with data-type="extendedBox"')}
 
-  let targetElement =[];
+  let targetElement = [];
   
   if(action === "open-menu"){
     targetElement = [document.body.querySelector('[data-for="menu"]')];
@@ -413,9 +415,22 @@ extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
   else if(action === "open-calculator"){
     targetElement = [document.body.querySelector('[data-for="calculator"]')];
   }
+  else if(action === "open-debugger"){
+    targetElement = [document.body.querySelector('[data-for="debug"]')];
+  }
 
-
-  if(targetBox.isExtended){
+  //error menssage
+  if(targetElement.length===0||!targetBox)
+    console.error("cannot find targetElement!",{
+    action: action??"data-action not set in button!",
+    btn: trigger,
+    targetBox: targetBox??{
+      openBoxid: trigger.dataset.openboxid??"data-openboxid not set in button!",
+      }
+    }
+  );
+  else if(targetBox.isExtended){
+    //show element
     targetElement.forEach(t => {t.classList.remove("hidden");});
     document.body.addEventListener("click",ClearAllExtendedBox);
   }else {
