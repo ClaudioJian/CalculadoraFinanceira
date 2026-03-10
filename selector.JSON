@@ -1,0 +1,34 @@
+{
+    "0":{
+        "container_class":"calculator-container",
+        "class":"",
+        "targetboxid":"calc",
+        "btn":[{
+            "class":"btn-open-calculator-inside",
+            "element_type":"button",
+            "tags":"",
+            "innerElements":[{
+                "class":"",
+                "element_type":"img",
+                "tags":{"src":"image/img_placeholder.jpg"}
+            }]
+        }],
+        "resizer":{
+            "container_class":"calculator-resizer-container",
+            "class":"",
+            "position" :"1"
+        },
+        "draggable":[{
+            "class":"draggable",
+            "element_type":"section",
+            "tags":"",
+            "innerElements":[{
+                "class":"",
+                "element_type":"p",
+                "tags":"",
+                "innerText":"Calculator",
+                "innerElements":""
+            }]
+        }]
+    }
+}
