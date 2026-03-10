@@ -194,13 +194,11 @@ function returnPos(targetElement) {
   }
 }
 
-
-
 function FollowMouseChange(event,El){
   event.preventDefault();
 
   const targetElement = El.closest('[data-type="extendedBox"]');
-  const classes = El.classList;
+  const direction = El.dataset.direction;
   const storageName = targetElement.dataset.for;
 
   const sizeTarget = targetElement.getBoundingClientRect();
@@ -217,34 +215,36 @@ function FollowMouseChange(event,El){
   const startMouseY = event.clientY;
 
   function moving(e){
-    classes.forEach(c=>{
-      const distanceY = e.clientY - startMouseY;
-      const distanceX =  e.clientX - startMouseX;
+    const distanceY = e.clientY - startMouseY;
+    const distanceX =  e.clientX - startMouseX;
 
-      if(c==="draggable"){
-        targetElement.style.top = startTop + distanceY + "px";
-        targetElement.style.left = startLeft + distanceX + "px";
-      }
-      else if(c==="js-top") {
+    
+
+    if(direction==="draggable"){
+      targetElement.style.top = startTop + distanceY + "px";
+      targetElement.style.left = startLeft + distanceX + "px";
+    }
+    else{ 
+      if(direction.includes("n")) {
         targetElement.style.top = startTop + distanceY + "px";
         targetElement.style.height = sizeTarget.height - distanceY + "px";
         resizedSize.distTop = -distanceY;
       }
-      else if(c==="js-bottom"){
+      else if(direction.includes("s")){
         targetElement.style.height = sizeTarget.height + distanceY +"px";
         resizedSize.distBottom = distanceY;
       }
     
-      else if(c==="js-left") {
+      if(direction.includes("w")) {
         targetElement.style.left = startLeft + distanceX + "px";
         targetElement.style.width = sizeTarget.width - distanceX + "px";
         resizedSize.distLeft = -distanceX;
       }
-      else if(c==="js-right"){
+      else if(direction.includes("e")){
         targetElement.style.width = sizeTarget.width + distanceX +"px";
         resizedSize.distRight = distanceX;
       }
-    });
+    }
   };
 
   document.body.addEventListener("mousemove",moving);
@@ -270,7 +270,7 @@ function FollowMouseChange(event,El){
 
 function ResetPos(El){
   const targetElement = El.closest('[data-type="extendedBox"]');
-  const classes = El.classList;
+  const direction = El.dataset.direction;
 
   const storageName = targetElement.dataset.for;
   let setting = JSON.parse(localStorage.getItem(`${storageName}Size`));
@@ -283,39 +283,36 @@ function ResetPos(El){
   const moveRight = resized.distRight||0;
   const moveLeft = resized.distLeft||0;
 
-  console.log(moveTop);
+  if(direction.includes("n")) {
+    targetElement.style.top = (parseFloat(setting.top) + moveTop) + 'px';
+    targetElement.style.height = (parseFloat(setting.height) - moveTop) + "px";
 
-  classes.forEach(c=>{
-    if(c === "js-top") {
-      targetElement.style.top = (parseFloat(setting.top) + moveTop) + 'px';
-      targetElement.style.height = (parseFloat(setting.height) - moveTop) + "px";
+    setting.height = targetElement.style.height;
+    setting.top = targetElement.style.top;
+    resized.distTop = 0;
+  }
+  else if(direction.includes("s")) {
+    targetElement.style.height = (parseFloat(setting.height) - moveBottom) +"px";
 
-      setting.height = targetElement.style.height;
-      setting.top = targetElement.style.top;
-      resized.distTop = 0;
-    }
-    else if(c === "js-bottom") {
-      targetElement.style.height = (parseFloat(setting.height) - moveBottom) +"px";
+    setting.height = targetElement.style.height;
+    resized.distBottom = 0;
+  }
 
-      setting.height = targetElement.style.height;
-      resized.distBottom = 0;
-    }
+  if(direction.includes("w")) {
+    targetElement.style.left = (parseFloat(setting.left) + moveLeft) + 'px';
+    targetElement.style.width = (parseFloat(setting.width) - moveLeft) + "px";
 
-    if(c === "js-left") {
-      targetElement.style.left = (parseFloat(setting.left) + moveLeft) + 'px';
-      targetElement.style.width = (parseFloat(setting.width) - moveLeft) + "px";
+    setting.width = targetElement.style.width;
+    setting.left = targetElement.style.left;
+    resized.distLeft = 0;
+  }
+  else if(direction.includes("e")) {
+    targetElement.style.width = (parseFloat(setting.width) - moveRight) +"px";
 
-      setting.width = targetElement.style.width;
-      setting.left = targetElement.style.left;
-      resized.distLeft = 0;
-    }
-    else if(c === "js-right") {
-      targetElement.style.width = (parseFloat(setting.width) - moveRight) +"px";
-
-      setting.width = targetElement.style.width;
-      resized.distRight = 0;
-    }
-  });
+    setting.width = targetElement.style.width;
+    resized.distRight = 0;
+    
+  }
 
   setting.resizedSize = resized;
   localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
@@ -378,7 +375,6 @@ extendedBox.forEach(box=>box.classList.add("hidden"));
 extendableElementList.forEach(trigger=>trigger.addEventListener("click",event=>{
   event.stopPropagation();
   const action = trigger.dataset.action;
-  
 
   let targetBox;
   if(trigger&&trigger.dataset.openboxid){

@@ -1,5 +1,6 @@
 this file is to explain JSON format for developers
 
+all json must name as same as create create_custom_element()'s first argument and second must be int
 selector.JSON:
     - "class": can hold multiple class, separete with space to indentify. put "none" or "" if don't exist
     - "filterID": indentifier to tell other selector, hide some of content depedent of itself. if no other selector is depedent to this selector, put "none" or ""
@@ -22,3 +23,10 @@ selector.JSON:
                                     innerElements:{...}},{...}
                                 ]
     - "itens" : list contain all innerElements, following "default_selected" format.
+
+calculator.json:
+    - targetboxid: indentifier to show/hide element with same data-openboxid
+    - btn: used for button to hide element
+    - resizer:
+        - class: additional class, class selector in css will be added automatically
+        - position: show which resizer should be rendered. use 0 for not rendering and 1 for render. following css standart such as: "1" render all, "11" => "top and bottom", "111" => "top lateral bottom", "1111" => "top right bottom left"

@@ -1,7 +1,6 @@
 {
-    "selector_container_class":"selector-container",
-    "item_class":"css-container-itens",
     "0":{
+        "container_class":"selector-container",
         "class":"s1",
         "filterID":"0",
         "depencityID":"",
@@ -12,6 +11,7 @@
             "order":"0",
             "innerElements":"investimento"
             },
+        "item_class":"css-container-itens",
         "itens":[{
             "class":"imposto",
             "type":"imposto",
@@ -22,10 +22,12 @@
     },
 
     "1":{
+        "container_class":"selector-container",
         "class":"s2",
         "filterID":"1",
         "depencityID":"0",
         "default_selected":"",
+        "item_class":"css-container-itens",
         "itens":[{
             "class":"",
             "type":"all",
@@ -65,10 +67,12 @@
     },
 
     "2":{
+        "container_class":"selector-container",
         "class":"s3",
         "filterID":"",
         "depencityID":"1",
         "default_selected":"",
+        "item_class":"css-container-itens",
         "itens":[{
             "class":"imposto_F",
             "type":"",
@@ -108,6 +112,7 @@
     },
 
     "3":{
+        "container_class":"selector-container",
         "class":"s4",
         "filterID":"",
         "depencityID":"",
@@ -118,6 +123,7 @@
             "order":"0",
             "innerElements":"Test0"
             },
+        "item_class":"css-container-itens",
         "itens":[{
             "class":"gráfico g2",
             "type":"",

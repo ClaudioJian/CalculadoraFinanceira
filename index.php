@@ -15,46 +15,26 @@
       <main>
         <!--menu-->
         <div class="css-menu-container">
-          <div class="css-menu" data-type="extendedBox" data-for="menu" data-targetboxid="menu">
+          <nav class="css-menu" data-type="extendedBox" data-for="menu" data-targetboxid="menu">
             <a href="esqueleto.html">test</a>
             <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
             <div class="resizer js-right"></div>
-          </div>
+          </nav>
           <!--button for open menu-->
-          <div style="height: fit-content;">
+          <button style="height: fit-content;">
             <img class="css-img-menu" data-action="open-menu" data-type="extendable" src="image/img_placeholder.jpg" data-openboxid="menu">
-          </div>
+          </button>
           <!--button for open calculator-->
-          <div class="btn-calculator-out">
+          <button class="btn-open-calculator-out">
             <img src="image/img_placeholder.jpg" data-action="open-calculator" data-type="extendable" data-openboxid="calc">
-          </div>
+          </button>
         </div>
 
         <!--calculator-->
-        <div class="calculator-container" data-type="extendedBox" data-for="calculator" data-targetboxid="calc">
-          <!--button for hide calculator-->
-          <div class="btn-calculator-inside">
-            <img src="image/img_placeholder.jpg" data-action="open-calculator" data-type="extendable" data-openboxid="calc">
-          </div>
-          
-          <!--resizer-->  
-          <div>
-            <div class="resizer js-top"></div>
-            <div class="resizer js-left"></div>
-            <div class="resizer js-right"></div>
-            <div class="resizer js-bottom"></div>
+        <?php
+          create_custom_element('calculator',1);
+        ?>
 
-            <div class="resizer js-top js-left"></div>
-            <div class="resizer js-top js-right"></div>
-            <div class="resizer js-bottom js-left"></div>
-            <div class="resizer js-bottom js-right"></div>
-          </div>
-          <!--body of calculator-->
-          <div class="draggable" data-for="draggable">
-            <p>Calculadora</p>
-          </div>
-
-        </div>
         
           
 
@@ -69,7 +49,6 @@
 
         <!--selector-->
         <?php
-          //loadQuant tell how many element you want to load from there, data for element must placed in order
           create_custom_element('selector',3);
         ?>
 
@@ -94,7 +73,7 @@
         </div>
 
       </main>
-      <script src="./main.js"></script>
+      <script src="main.js"></script>
   </body>
 </html>
 
