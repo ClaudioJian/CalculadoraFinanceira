@@ -459,3 +459,60 @@ resizers.forEach(resizerEl=>{
 
 draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(event,El)));
 
+
+//-------------------------------------------calculator---------------------------------------------------------------------------
+
+
+calculators.forEach(calc=>{
+  //make it interagible
+  calc.tabIndex='1';
+
+  //elements
+  const resultEl = calc.querySelector('[data-for="result"]');
+  const prevOp = calc.querySelector('[data-for="previousoperation"]');
+  const btn = calc.querySelectorAll('[data-value]');
+  //all operation
+  const operation = calc.querySelectorAll('[data-type="operator"]');
+  const operationValue = [];
+  operation.forEach(op=>operationValue.push(op.dataset.value)); 
+
+  let prevKey;
+
+  function keyboardClickBtn(e){
+    if(e.key==='Enter') {
+      e.preventDefault();
+      const equalBtn = calc.querySelector('[data-value="="]');
+      if (equalBtn) equalBtn.click();
+    }else{
+    btn.forEach(button=>{
+      if(e.key===button.dataset.value) button.click();
+      });
+    }
+  }
+
+  calc.addEventListener("focusin",e=>{
+    //change text inside it
+    document.addEventListener("keydown",keyboardClickBtn);
+  });
+
+  calc.addEventListener("focusout",e=>{
+    document.removeEventListener("keydown",keyboardClickBtn);
+  });
+
+  btn.forEach(b=>{
+    b.addEventListener("click",event_c=>{
+      const key = b.dataset.value;
+      if(!key) console.error("you must define data-value! ",key," in ",b);
+      else{
+        if((operationValue.includes(key)&&operationValue.includes(prevKey))||key==='Backspace'){
+          resultEl.innerText = resultEl.innerText.slice(0,-1);
+        }
+        resultEl.innerText += key;
+      }
+      if(key==='='&& resultEl.innerText.length>1) resultEl.innerText = eval(resultEl.innerText.replace('=',''));
+      prevKey = key!=='='?key:prevKey;
+    });
+  })
+});
+
+

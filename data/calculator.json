@@ -43,13 +43,13 @@
                         "innerElements":[{
                                 "class":"previous-operation",
                                 "element_type":"p",
-                                "tags":"",
+                                "tags":{"data-for":"previousOperation"},
                                 "innerText":""
                             },
                             {
                                 "class":"result",
                                 "element_type":"p",
-                                "tags":"",
+                                "tags":{"data-for":"result"},
                                 "innerText":""
                             }
                         ]
@@ -67,8 +67,20 @@
                             {
                                 "class":"btn",
                                 "element_type":"button",
-                                "tags":{"data-value":"2"},
-                                "innerText":"2"
+                                "tags":{
+                                    "data-value":"+",
+                                    "data-type":"operator"
+                                },
+                                "innerText":"+"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
+                                    "data-value":"=",
+                                    "data-type":"operator"
+                                },
+                                "innerText":"="
                             }
                         ]
                     }

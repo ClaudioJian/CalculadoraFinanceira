@@ -30,3 +30,4 @@ calculator.json:
     - resizer:
         - class: additional class, class selector in css will be added automatically
         - position: show which resizer should be rendered. use 0 for not rendering and 1 for render. following css standart such as: "1" render all, "11" => "top and bottom", "111" => "top lateral bottom", "1111" => "top right bottom left"
+    all button inside body for calculator must have "tags":{"data-value":""}. except for special operation, must match exist function like sqrt() cos()
