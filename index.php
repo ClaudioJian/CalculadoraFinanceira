@@ -18,7 +18,11 @@
           <nav class="css-menu" data-type="extendedBox" data-for="menu" data-targetboxid="menu">
             <a href="esqueleto.html">test</a>
             <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
-            <div class="resizer js-right"></div>
+            <form>
+              <input placeholder="test" name="test">
+            </form>
+            
+            <div class="resizer" data-direction="e"></div>
           </nav>
           <!--button for open menu-->
           <button style="height: fit-content;">

@@ -198,6 +198,8 @@ function FollowMouseChange(event,El){
   event.preventDefault();
 
   const targetElement = El.closest('[data-type="extendedBox"]');
+  targetElement.focus();
+
   const direction = El.dataset.direction;
   const storageName = targetElement.dataset.for;
 
@@ -250,6 +252,7 @@ function FollowMouseChange(event,El){
   document.body.addEventListener("mousemove",moving);
 
   window.addEventListener("mouseup",function Release(){
+    targetElement.blur();
     document.body.removeEventListener("mousemove",moving);
     window.removeEventListener("mouseup",Release);
     returnPos(targetElement);
@@ -327,6 +330,7 @@ const allSelector = document.querySelectorAll('.selector');
 
 const resizers = document.querySelectorAll('.resizer');
 const draggable = document.querySelectorAll('.draggable');
+const calculators = document.querySelectorAll('[data-for="calculator"]');
 
 //-----------------------------------elements changes---------------------------------------------------------------
 //hidden all selector's item with depencity

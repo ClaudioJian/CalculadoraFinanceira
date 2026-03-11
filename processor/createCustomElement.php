@@ -208,6 +208,7 @@
                 //button to hide calculator
                 $btn = $target['btn'];
                 $drag_el = $target['draggable'];
+                $calc_body = $target['body'];
 
                 //tags to insert to button
                 $targetID = $target['targetboxid']??'';
@@ -219,6 +220,7 @@
                     //resizers
                     resizer($target);
                     create_children($drag_el,$new_tags_drag);
+                    create_children($calc_body);
                 echo '</section>';
             ;}
             else return;

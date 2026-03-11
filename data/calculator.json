@@ -29,6 +29,51 @@
                 "innerText":"Calculator",
                 "innerElements":""
             }]
-        }]
+        }],
+        "body":[
+            {
+                "class":"",
+                "element_type":"section",
+                "tags":"",
+                "innerElements":[
+                    {
+                        "class":"calculator-result-container",
+                        "element_type":"div",
+                        "tags":"",
+                        "innerElements":[{
+                                "class":"previous-operation",
+                                "element_type":"p",
+                                "tags":"",
+                                "innerText":""
+                            },
+                            {
+                                "class":"result",
+                                "element_type":"p",
+                                "tags":"",
+                                "innerText":""
+                            }
+                        ]
+                    },
+                    {
+                        "class":"calculator-btn-container",
+                        "element_type":"div",
+                        "tags":"",
+                        "innerElements":[{
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{"data-value":"1"},
+                                "innerText":"1"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{"data-value":"2"},
+                                "innerText":"2"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     }
 }
