@@ -293,12 +293,6 @@ div[data-direction="se"]{
   background-color: blanchedalmond;
 }
 
-/*
-.calculator-resizer-container{
-  position: relative;
-}
-*/
-
 /* ------------------JS utilidade ----------------------*/
 .hidden{
   width: 0;

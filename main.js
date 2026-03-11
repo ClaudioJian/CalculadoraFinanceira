@@ -469,14 +469,25 @@ calculators.forEach(calc=>{
 
   //elements
   const resultEl = calc.querySelector('[data-for="result"]');
-  const prevOp = calc.querySelector('[data-for="previousoperation"]');
+  const prevOpEl = calc.querySelector('[data-for="previousoperation"]');
   const btn = calc.querySelectorAll('[data-value]');
   //all operation
   const operation = calc.querySelectorAll('[data-type="operator"]');
   const operationValue = [];
   operation.forEach(op=>operationValue.push(op.dataset.value)); 
 
+  //array to waiting for priority end calculations
+  let awaitOperation =[];
+  let awaitValue = [];
   let prevKey;
+  let currNumber = '';
+
+  //operators weight
+  const priority = {
+    '*':2 , '/':2,
+    '+':1,'-':1,
+    '=':0
+  };
 
   function keyboardClickBtn(e){
     if(e.key==='Enter') {
@@ -502,15 +513,63 @@ calculators.forEach(calc=>{
   btn.forEach(b=>{
     b.addEventListener("click",event_c=>{
       const key = b.dataset.value;
-      if(!key) console.error("you must define data-value! ",key," in ",b);
-      else{
-        if((operationValue.includes(key)&&operationValue.includes(prevKey))||key==='Backspace'){
+
+      if(!key) {console.error("you must define data-value! ",key," in ",b);return;}
+      
+      if(operationValue.includes(key)){
+        const currPriority = priority[key];
+
+        //if previous key is also operator
+        if(prevKey && operationValue.includes(prevKey)){
           resultEl.innerText = resultEl.innerText.slice(0,-1);
+          resultEl.innerText += key;
+          //uptade stack
+          if(awaitOperation.length>0) {
+            awaitOperation[awaitOperation.length-1] = key;
+          }
+          prevKey = key;
+          return;
         }
-        resultEl.innerText += key;
+
+        if(currPriority <= priority[awaitOperation[awaitOperation.length -1]]){
+          while(awaitOperation.length > 0){
+            // result [operator]= stack number [operator] currentNumber
+            const prevVal= awaitValue.pop();
+            const op = awaitOperation.pop();
+            const result = eval(`${prevVal}${op}${currNumber}`);
+            
+            currNumber = result;
+          }
+          
+          if(key==='=') {
+            prevOpEl.innerText = resultEl.innerText;
+            prevOpEl.innerText += '=';
+            resultEl.innerText = currNumber;
+            awaitValue = [];
+            awaitOperation = [];
+            return;
+          }
+
+          resultEl.innerText = currNumber;
+
+        }
+        awaitValue.push(currNumber);
+        awaitOperation.push(key);
+        currNumber ='';
+
+        //only add operator if has number on it
+        if(resultEl.innerText.length>=1){
+          if(key.length===1) resultEl.innerText += key;
+        }
       }
-      if(key==='='&& resultEl.innerText.length>1) resultEl.innerText = eval(resultEl.innerText.replace('=',''));
-      prevKey = key!=='='?key:prevKey;
+      else if(key.length===1) {
+        //add only key with 1 char
+        resultEl.innerText += key;
+        currNumber += key;
+      } 
+      
+
+      prevKey = key;
     });
   })
 });

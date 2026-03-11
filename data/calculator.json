@@ -41,13 +41,13 @@
                         "element_type":"div",
                         "tags":"",
                         "innerElements":[{
-                                "class":"previous-operation",
+                                "class":"",
                                 "element_type":"p",
                                 "tags":{"data-for":"previousOperation"},
                                 "innerText":""
                             },
                             {
-                                "class":"result",
+                                "class":"",
                                 "element_type":"p",
                                 "tags":{"data-for":"result"},
                                 "innerText":""
@@ -67,11 +67,40 @@
                             {
                                 "class":"btn",
                                 "element_type":"button",
+                                "tags":{"data-value":"2"},
+                                "innerText":"2"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{"data-value":"3"},
+                                "innerText":"3"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
                                 "tags":{
                                     "data-value":"+",
                                     "data-type":"operator"
                                 },
                                 "innerText":"+"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
+                                    "data-value":"*",
+                                    "data-type":"operator"
+                                },
+                                "innerText":"*"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
+                                    "data-value":"Backspace"
+                                },
+                                "innerText":"Backspace"
                             },
                             {
                                 "class":"btn",
