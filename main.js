@@ -486,29 +486,30 @@ calculators.forEach(calc=>{
   const priority = {
     '*':2 , '/':2,
     '+':1,'-':1,
-    '=':0
+    '=':-99,
+    '(':-1, ')':-2
   };
+  //flags
+  let has_dot = false;
 
   function keyboardClickBtn(e){
-    if(e.key==='Enter') {
-      e.preventDefault();
-      const equalBtn = calc.querySelector('[data-value="="]');
-      if (equalBtn) equalBtn.click();
-    }else{
-    btn.forEach(button=>{
-      if(e.key===button.dataset.value) button.click();
-      });
-    }
+    let targetbtn;
+    
+    e.preventDefault();
+    switch(e.key){
+      case 'Enter': targetbtn = calc.querySelector('[data-value="="]')??null; break;
+      case 'Backspace': targetbtn = calc.querySelector('[data-value="backspace"]')??null; break;
+      default:
+        btn.forEach(button=>{
+          if(e.key===button.dataset.value) button.click();
+          });
+        break;
+  }
+    if(targetbtn) targetbtn.click();
   }
 
-  calc.addEventListener("focusin",e=>{
-    //change text inside it
-    document.addEventListener("keydown",keyboardClickBtn);
-  });
-
-  calc.addEventListener("focusout",e=>{
-    document.removeEventListener("keydown",keyboardClickBtn);
-  });
+  calc.addEventListener("focusin",e=>{document.addEventListener("keydown",keyboardClickBtn);});
+  calc.addEventListener("focusout",e=>{document.removeEventListener("keydown",keyboardClickBtn);});
 
   btn.forEach(b=>{
     b.addEventListener("click",event_c=>{
@@ -519,8 +520,24 @@ calculators.forEach(calc=>{
       if(operationValue.includes(key)){
         const currPriority = priority[key];
 
+        //put in stack and return
+        if(key==='('){
+          
+          if(currNumber!=='') {
+            awaitValue.push(currNumber);
+            if(operationValue.includes(prevKey)) awaitOperation.push(prevKey);
+            else awaitOperation.push('*'); // 5*(
+          }
+          //push ( and blank state
+          awaitOperation.push('(');
+          resultEl.innerText += '(';
+          currNumber ='';
+          prevKey = '(';
+          return;
+        }
+
         //if previous key is also operator
-        if(prevKey && operationValue.includes(prevKey)){
+        if(prevKey && operationValue.includes(prevKey)&& prevKey !=='(' && prevKey!==')'){
           resultEl.innerText = resultEl.innerText.slice(0,-1);
           resultEl.innerText += key;
           //uptade stack
@@ -531,14 +548,30 @@ calculators.forEach(calc=>{
           return;
         }
 
-        if(currPriority <= priority[awaitOperation[awaitOperation.length -1]]){
-          while(awaitOperation.length > 0){
-            // result [operator]= stack number [operator] currentNumber
-            const prevVal= awaitValue.pop();
+
+
+        if(currPriority <= priority[awaitOperation[awaitOperation.length -1]] && prevKey !==')'){
+          if(key===')'){
+            while(awaitOperation.length > 0){
             const op = awaitOperation.pop();
-            const result = eval(`${prevVal}${op}${currNumber}`);
-            
-            currNumber = result;
+
+            if(op==='(') break;
+            const prevVal = awaitValue.pop();
+            const expressionStr = `${prevVal==='.'?0:prevVal}${op}${currNumber==='.'?0:currNumber}`;
+            currNumber = eval(expressionStr);
+          }
+          }
+          else {
+            while(awaitOperation.length > 0 
+            && currPriority <= priority[awaitOperation[awaitOperation.length -1]]){
+              
+              const op = awaitOperation.pop();
+              if(op==='(') {continue;}
+
+              const prevVal = awaitValue.pop();
+              const expressionStr = `${prevVal==='.'?0:prevVal}${op}${currNumber==='.'?0:currNumber}`;
+              currNumber = eval(expressionStr);
+            }
           }
           
           if(key==='=') {
@@ -550,23 +583,66 @@ calculators.forEach(calc=>{
             return;
           }
 
-          resultEl.innerText = currNumber;
+          let fullText = resultEl.innerText;
 
+          if(key!==')') {
+            let idx;
+            for(idx=fullText.length-1;idx>0;idx--){
+              if(fullText[idx]==='(') break;
+              if(operationValue.includes(fullText[idx])&&currPriority > priority[fullText[idx]]) break;
+              };
+            resultEl.innerText = fullText.substring(0,idx?idx+1:0) + currNumber;}
+          else {
+            
+            let lastParenteses = fullText.lastIndexOf('(');
+            if (lastParenteses !== -1) { resultEl.innerText = fullText.substring(0,lastParenteses+1) + currNumber;}
+
+            else resultEl.innerText = currNumber;
+          }
         }
+
         awaitValue.push(currNumber);
-        awaitOperation.push(key);
+        if(key!==')' && key!=='=') awaitOperation.push(key);
         currNumber ='';
 
+        //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
+        if(has_dot) has_dot = false;
+
         //only add operator if has number on it
-        if(resultEl.innerText.length>=1){
-          if(key.length===1) resultEl.innerText += key;
+        if(resultEl.innerText.length>=1) resultEl.innerText += key;
+        
+      }
+      else if(key==='backspace'){
+        resultEl.innerText = resultEl.innerText.slice(0,-1);
+
+        const deletedChar = resultEl.innerText.slice(-1);
+
+        if(operationValue.includes(deletedChar)) {
+          if(awaitOperation.length>0) awaitOperation.pop();
+          //if deleted all number, set current number to what is in stack
+          if(awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
+            currNumber = awaitValue.pop()||'';
+          has_dot = currNumber.includes('.');
+        }else{
+          if(deletedChar==='.') has_dot = false;
+          if(currNumber!=='')currNumber =  currNumber.slice(0,-1);
         }
+        
       }
       else if(key.length===1) {
+        //prevent 1.2.22 float number
+        if(key ==='.') {
+          if(has_dot) return;
+          else has_dot = true;
+        }
+        //)5 is invalid, at least need operator
+        if(prevKey===')') return;
+
         //add only key with 1 char
         resultEl.innerText += key;
         currNumber += key;
-      } 
+      }
+      
       
 
       prevKey = key;

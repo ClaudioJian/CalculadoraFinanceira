@@ -98,6 +98,32 @@
                                 "class":"btn",
                                 "element_type":"button",
                                 "tags":{
+                                    "data-value":"."
+                                },
+                                "innerText":"."
+                            },
+                                                        {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
+                                    "data-value":"(",
+                                    "data-type":"operator"
+                                },
+                                "innerText":"("
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
+                                    "data-value":")",
+                                    "data-type":"operator"
+                                },
+                                "innerText":")"
+                            },
+                            {
+                                "class":"btn",
+                                "element_type":"button",
+                                "tags":{
                                     "data-value":"Backspace"
                                 },
                                 "innerText":"Backspace"
