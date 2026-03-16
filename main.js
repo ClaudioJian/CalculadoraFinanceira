@@ -9,6 +9,279 @@ class POS {
   }
 }
 
+class CALCULATOR{
+  constructor(calc){
+    this.calc = calc;
+
+    //element
+    this.btn = this.calc.querySelectorAll('[data-value]');
+    this.resultEl = this.calc.querySelector('[data-for="result"]');
+    this.prevOpEl = this.calc.querySelector('[data-for="previousoperation"]');
+
+    //attributte to track which button is clicked
+    this.targetbtn = {
+      key : '',
+      type : '',
+      btnEl : null
+    };
+
+    this.priority = {
+      '=' : -99,
+      '(' : -1, ')': -2,
+      '+' : 1, '-' : 1,
+      '*' : 2, '/' : 2,
+    }
+
+    // Helper array to check if a character is an operator
+    this.operationValue = ['+', '-', '*', '/', '(', ')'];
+
+    //array to waiting for priority end calculations
+    this.awaitOperation = [];
+    this.awaitValue = [];
+    this.prevKey = {value:'',type:''};
+    this.currNumber = '';
+
+    this.has_dot = false;
+
+    //
+    this.handleKeyDown = this.HandleKeyDown.bind(this);
+
+    this.init();
+  }
+
+  HandleKeyDown(e){
+    e.preventDefault();
+    this.targetbtn.btnEl = null; //reset
+
+    switch(e.key){
+      case 'Enter': 
+        this.targetbtn.btnEl = this.calc.querySelector('[data-value="="]') ?? null; 
+        break;
+      case 'Backspace': 
+        this.targetbtn.btnEl = this.calc.querySelector('[data-value="backspace"]') ?? null; 
+        break;
+      default:
+        this.btn.forEach(button=>{
+          if(e.key===button.dataset.value) this.targetbtn.btnEl = button;
+        });
+      break;
+    }
+    if(this.targetbtn.btnEl) this.targetbtn.btnEl.click();
+  }
+
+  Parenteses_Open(){
+    if(this.currNumber!=='') {
+      this.awaitValue.push(this.currNumber);
+      if(this.prevKey.type === 'operator') this.awaitOperation.push(this.prevKey.value);
+      else this.awaitOperation.push('*'); // 5*(
+    }
+    //push ( and blank state
+    this.awaitOperation.push('(');
+    this.resultEl.innerText += '(';
+    this.currNumber ='';
+
+    this.prevKey.value = '(';
+    this.prevKey.type = 'operator';
+  }
+
+  PrevMultipleOperator(){
+    
+    //shortcut
+    const key = this.targetbtn.key;
+
+    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
+    this.resultEl.innerText += key;
+    
+    //uptade stack
+    if(this.awaitOperation.length>0) {
+      this.awaitOperation[this.awaitOperation.length-1] = key;
+    }
+    this.prevKey.value = this.targetbtn.key;
+    this.prevKey.type = this.targetbtn.type;
+  }
+
+  Solve(op){
+    let prevVal = this.awaitValue.pop();
+    //ignore ) if exist
+    if(prevVal === '('||prevVal === ')') prevVal = this.awaitValue.pop();
+    
+    prevVal = prevVal === '.' ? 0 : parseFloat(prevVal);
+    this.currNumber = this.currNumber === '.' ? 0 : parseFloat(this.currNumber); 
+
+    if(isNaN(prevVal)) return this.currNumber;
+
+    switch(op){
+      case ')':
+      case '(': break;
+      case '*' : return prevVal * this.currNumber;
+      case '/' : return prevVal / this.currNumber;
+      case '+': return prevVal + this.currNumber;
+      case '-': return prevVal - this.currNumber;
+    }
+  }
+
+  SolveStack(currPriority){
+    console.log(this);
+    //shortcut
+    const key = this.targetbtn.key;
+    if(key===')'){
+      //solve all stack until hit (
+      while(this.awaitOperation.length > 0){
+
+        const op = this.awaitOperation.pop();
+
+        if(op==='(') {
+          this.awaitOperation.push('(');
+          break;}
+        this.currNumber = this.Solve(op);
+      }
+    }
+    else {
+      while(
+        this.awaitOperation.length > 0 
+      && currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]] 
+    ){
+        //solve until hit wall of await value ')'
+        if(this.awaitValue[this.awaitValue.length -1] === ')' && key !== '=') break;
+
+        const op = this.awaitOperation.pop();
+
+        //solve until end of array if is =
+        if(op==='(') {
+          if(key === '=') continue; else break;
+        }
+        //remove ) from stack and skip this
+        
+        this.currNumber = this.Solve(op);
+      }
+    }
+    //change result to prevOpEl and show only result
+    if(key==='=') {
+      console.log('=');
+      this.prevOpEl.innerText = this.resultEl.innerText;
+      this.prevOpEl.innerText += '=';
+      this.resultEl.innerText = this.currNumber;
+      this.awaitValue = [];
+      this.awaitOperation = [];
+      return;
+    }
+
+    let fullText = this.resultEl.innerText;
+
+    if(key!==')') {
+      let idx;
+      for(idx=fullText.length-1;idx>0;idx--){
+        if(fullText[idx]==='(') break;
+        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
+        };
+      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
+    else {
+      let lastParenteses = fullText.lastIndexOf('(');
+      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
+
+      else this.resultEl.innerText = this.currNumber;
+    }
+  }
+
+  OperatorHandler(){ //bug: 3)+ -> await value = ''
+    //shortcut
+    const key = this.targetbtn.key;
+
+    const currPriority = this.priority[key];
+
+    // put in stack and end
+    if(key==='(') {
+      this.Parenteses_Open(); 
+      return;
+    }
+    //if previous key is also operator
+    else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
+    {
+      this.PrevMultipleOperator();
+      return;
+    }
+    else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
+      this.SolveStack(currPriority); 
+    }
+
+    if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
+    if(key !== '=' && key !== ')') this.awaitOperation.push(key);
+    //push ) to block solve stack
+    if(key===')') this.awaitValue.push(')');
+
+    this.currNumber = '';
+
+    //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
+    if(this.has_dot) this.has_dot = false;
+
+    //only add operator if has number on it
+    if(this.resultEl.innerText.length>=1) this.resultEl.innerText += key;
+    console.log(this,"final this");
+  }
+
+  Backspace(){
+
+    const deletedChar = this.resultEl.innerText.slice(-1);
+    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
+
+    if(this.operationValue.includes(deletedChar)){
+      if(this.awaitOperation.length>0) this.awaitOperation.pop();
+      //if deleted all number, set current number to what is in stack
+      if(this.awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
+        this.currNumber = this.awaitValue.pop()||'';
+        //convert currNumber to str because it is float now
+        this.has_dot = String(this.currNumber).includes('.');
+    }else{
+      if(deletedChar==='.') this.has_dot = false;
+      if(this.currNumber!=='') this.currNumber = this.currNumber.slice(0,-1);
+    } 
+  }
+
+  AddCharInResult(){
+    //shortcut
+    const key = this.targetbtn.key;
+
+    if(key.length===1) {
+      //prevent 1.2.22 float number
+      if(key ==='.') {
+        if(this.has_dot) return;
+        else this.has_dot = true;
+      }
+      //)5 is invalid, at least need operator
+      if(this.prevKey.value===')') return;
+
+      //add only key with 1 char
+      this.resultEl.innerText += key;
+      this.currNumber += key;
+    }
+  }
+
+  CalculatorLogic(e,b){
+    this.targetbtn.btnEl = b;
+    this.targetbtn.key = b.dataset.value ?? null;
+    this.targetbtn.type = b.dataset.type ?? null;
+
+
+    if(!this.targetbtn.key) {console.error("you must define data-value! ",key," in ",b);return;}
+
+    if(this.targetbtn.type && this.targetbtn.type === 'operator') this.OperatorHandler();
+    else if(this.targetbtn.key === 'backspace') this.Backspace();
+    else if(this.targetbtn.key.length === 1) this.AddCharInResult();
+
+    this.prevKey.value = this.targetbtn.key;
+    this.prevKey.type = this.targetbtn.type;
+  }
+
+  init(){
+    //make it interagible
+    this.calc.tabIndex='1';
+
+    this.calc.addEventListener("focusin",e=>{document.addEventListener("keydown",this.HandleKeyDown);});
+    this.calc.addEventListener("focusout",e=>{document.removeEventListener("keydown",this.HandleKeyDown);});
+
+    this.btn.forEach(b=>b.addEventListener("click",e=>this.CalculatorLogic(e,b)));
+  }
+}
 //functions js
 
 function ElementBubbleSort(elementList){
@@ -493,248 +766,7 @@ draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(
 
 //-------------------------------------------calculator---------------------------------------------------------------------------
 
-class CALCULATOR{
-  constructor(calc){
-    this.calc = calc;
 
-    //element
-    this.btn = this.calc.querySelectorAll('[data-value]');
-    this.resultEl = this.calc.querySelector('[data-for="result"]');
-    this.prevOpEl = this.calc.querySelector('[data-for="previousoperation"]');
-
-    //attributte to track which button is clicked
-    this.targetbtn = {
-      key : '',
-      type : '',
-      btnEl : null
-    };
-
-    this.priority = {
-      '=' : -99,
-      '(' : -1, ')': -2,
-      '+' : 1, '-' : 1,
-      '*' : 2, '/' : 2,
-    }
-
-    // Helper array to check if a character is an operator
-    this.operationValue = ['+', '-', '*', '/', '(', ')'];
-
-    //array to waiting for priority end calculations
-    this.awaitOperation = [];
-    this.awaitValue = [];
-    this.prevKey = {value:'',type:''};
-    this.currNumber = '';
-
-    this.has_dot = false;
-
-    //
-    this.handleKeyDown = this.keyboardClickBtn.bind(this);
-
-    this.init();
-  }
-
-  keyboardClickBtn(e){
-    e.preventDefault();
-    this.targetbtn.btnEl = null; //reset
-
-    switch(e.key){
-      case 'Enter': 
-        this.targetbtn.btnEl = this.calc.querySelector('[data-value="="]') ?? null; 
-        break;
-      case 'Backspace': 
-        this.targetbtn.btnEl = this.calc.querySelector('[data-value="backspace"]') ?? null; 
-        break;
-      default:
-        this.btn.forEach(button=>{
-          if(e.key===button.dataset.value) this.targetbtn.btnEl = button;
-        });
-      break;
-    }
-    if(this.targetbtn.btnEl) this.targetbtn.btnEl.click();
-  }
-
-  Parenteses_Open(){
-    if(this.currNumber!=='') {
-      this.awaitValue.push(this.currNumber);
-      if(this.prevKey.type === 'operator') this.awaitOperation.push(this.prevKey.value);
-      else this.awaitOperation.push('*'); // 5*(
-    }
-    //push ( and blank state
-    this.awaitOperation.push('(');
-    this.resultEl.innerText += '(';
-    this.currNumber ='';
-
-    this.prevKey.value = '(';
-    this.prevKey.type = 'operator';
-  }
-
-  PrevMultipleOperator(){
-    
-    //shortcut
-    const key = this.targetbtn.key;
-
-    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
-    this.resultEl.innerText += key;
-    
-    //uptade stack
-    if(this.awaitOperation.length>0) {
-      this.awaitOperation[this.awaitOperation.length-1] = key;
-    }
-    this.prevKey.value = this.targetbtn.key;
-    this.prevKey.type = this.targetbtn.type;
-  }
-
-  SolveStack(currPriority){
-    //shortcut
-    const key = this.targetbtn.key;
-    if(key===')'){ //bug (3)+2-> (3)6+
-      console.log('key === )')
-      while(this.awaitOperation.length > 0){
-
-        const op = this.awaitOperation.pop();
-
-        if(op==='(') break;
-
-        const prevVal = this.awaitValue.pop();
-        const expressionStr = `${prevVal==='.'? 0:prevVal} ${op} ${this.currNumber==='.'? 0:prevVal}`;
-
-        this.currNumber = eval(expressionStr); //bug
-      }
-      console.log(this.awaitValue);
-    }
-    else {
-      while(
-        this.awaitOperation.length > 0 
-      && currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]){
-        
-        const op = this.awaitOperation.pop();
-        if(op==='(') {continue;}
-
-        const prevVal = this.awaitValue.pop();
-        const expressionStr = `${prevVal==='.'? 0:prevVal} ${op} ${this.currNumber==='.'? 0:prevVal}`;
-
-        this.currNumber = eval(expressionStr);
-      }
-    }
-    //change result to prevOpEl and show only result
-    if(key==='=') {
-      this.prevOpEl.innerText = this.resultEl.innerText;
-      this.prevOpEl.innerText += '=';
-      this.resultEl.innerText = this.currNumber;
-      this.awaitValue = [];
-      this.awaitOperation = [];
-      return;
-    }
-
-    let fullText = this.resultEl.innerText;
-
-    if(key!==')') {
-      let idx;
-      for(idx=fullText.length-1;idx>0;idx--){
-        if(fullText[idx]==='(') break;
-        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
-        };
-      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
-    else {
-      let lastParenteses = fullText.lastIndexOf('(');
-      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
-
-      else this.resultEl.innerText = this.currNumber;
-    }
-  }
-
-  OperatorHandler(){ // 3)+ -> await value = ''
-    //shortcut
-    const key = this.targetbtn.key;
-
-    const currPriority = this.priority[key];
-
-    // put in stack and end
-    if(key==='(') {this.Parenteses_Open();return;}
-    //if previous key is also operator
-    else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
-    {
-      this.PrevMultipleOperator();
-      return;
-    }
-    else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
-      this.SolveStack(currPriority); 
-    }
-
-    this.awaitValue.push(this.currNumber);
-    console.log(this);
-    if(key !== ')' && key !== '=') this.awaitOperation.push(key);
-    this.currNumber = '';
-
-    //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
-    if(this.has_dot) this.has_dot = false;
-
-    //only add operator if has number on it
-    if(this.resultEl.innerText.length>=1) this.resultEl.innerText += key;
-  }
-
-  Backspace(){
-    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
-
-    const deletedChar = this.resultEl.innerText.slice(-1);
-
-    if(this.operationValue.includes(deletedChar)){
-      if(this.awaitOperation.length>0) this.awaitOperation.pop();
-      //if deleted all number, set current number to what is in stack
-      if(this.awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
-        this.currNumber = this.awaitValue.pop()||'';
-        this.has_dot = this.currNumber.includes('.');
-    }else{
-      if(deletedChar==='.') this.has_dot = false;
-      if(this.currNumber!=='') this.currNumber = this.currNumber.slice(0,-1);
-    } 
-  }
-
-  AddCharInResult(){
-    //shortcut
-    const key = this.targetbtn.key;
-
-    if(key.length===1) {
-      //prevent 1.2.22 float number
-      if(key ==='.') {
-        if(this.has_dot) return;
-        else this.has_dot = true;
-      }
-      //)5 is invalid, at least need operator
-      if(this.prevKey.value===')') return;
-
-      //add only key with 1 char
-      this.resultEl.innerText += key;
-      this.currNumber += key;
-    }
-  }
-
-  CalculatorLogic(e,b){
-    this.targetbtn.btnEl = b;
-    this.targetbtn.key = b.dataset.value ?? null;
-    this.targetbtn.type = b.dataset.type ?? null;
-
-
-    if(!this.targetbtn.key) {console.error("you must define data-value! ",key," in ",b);return;}
-
-    if(this.targetbtn.type && this.targetbtn.type === 'operator') this.OperatorHandler();
-    else if(this.targetbtn.key === 'backspace') this.Backspace();
-    else if(this.targetbtn.key.length === 1) this.AddCharInResult();
-
-    this.prevKey.value = this.targetbtn.key;
-    this.prevKey.type = this.targetbtn.type;
-  }
-
-  init(){
-    //make it interagible
-    this.calc.tabIndex='1';
-
-    this.calc.addEventListener("focusin",e=>{document.addEventListener("keydown",this.keyboardClickBtn);});
-    this.calc.addEventListener("focusout",e=>{document.removeEventListener("keydown",this.keyboardClickBtn);});
-
-    this.btn.forEach(b=>b.addEventListener("click",e=>this.CalculatorLogic(e,b)));
-  }
-}
 
 calculators.forEach(calc=> new CALCULATOR(calc));
 
