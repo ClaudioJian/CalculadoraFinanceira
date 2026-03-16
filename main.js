@@ -320,6 +320,37 @@ function ResetPos(El){
   setting.resizedSize = resized;
   localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
 }
+
+//calculator
+function CalculatorLogic(calc){
+  //elements
+  const resultEl = calc.querySelector('[data-for="result"]');
+  const prevOpEl = calc.querySelector('[data-for="previousoperation"]');
+
+  //all operation
+  const operation = calc.querySelectorAll('[data-type="operator"]');
+  const operationValue = [];
+  operation.forEach(op=>operationValue.push(op.dataset.value)); 
+
+  //array to waiting for priority end calculations
+  let awaitOperation =[];
+  let awaitValue = [];
+  let prevKey;
+  let currNumber = '';
+
+  //operators weight
+  const priority = {
+    '*':2 , '/':2,
+    '+':1,'-':1,
+    '=':-99,
+    '(':-1, ')':-2
+  };
+  //flags
+  let has_dot = false;
+
+
+}
+
 //variable global
 
 
@@ -462,192 +493,249 @@ draggable.forEach(El=>El.addEventListener("mousedown", event=>FollowMouseChange(
 
 //-------------------------------------------calculator---------------------------------------------------------------------------
 
+class CALCULATOR{
+  constructor(calc){
+    this.calc = calc;
 
-calculators.forEach(calc=>{
-  //make it interagible
-  calc.tabIndex='1';
+    //element
+    this.btn = this.calc.querySelectorAll('[data-value]');
+    this.resultEl = this.calc.querySelector('[data-for="result"]');
+    this.prevOpEl = this.calc.querySelector('[data-for="previousoperation"]');
 
-  //elements
-  const resultEl = calc.querySelector('[data-for="result"]');
-  const prevOpEl = calc.querySelector('[data-for="previousoperation"]');
-  const btn = calc.querySelectorAll('[data-value]');
-  //all operation
-  const operation = calc.querySelectorAll('[data-type="operator"]');
-  const operationValue = [];
-  operation.forEach(op=>operationValue.push(op.dataset.value)); 
+    //attributte to track which button is clicked
+    this.targetbtn = {
+      key : '',
+      type : '',
+      btnEl : null
+    };
 
-  //array to waiting for priority end calculations
-  let awaitOperation =[];
-  let awaitValue = [];
-  let prevKey;
-  let currNumber = '';
+    this.priority = {
+      '=' : -99,
+      '(' : -1, ')': -2,
+      '+' : 1, '-' : 1,
+      '*' : 2, '/' : 2,
+    }
 
-  //operators weight
-  const priority = {
-    '*':2 , '/':2,
-    '+':1,'-':1,
-    '=':-99,
-    '(':-1, ')':-2
-  };
-  //flags
-  let has_dot = false;
+    // Helper array to check if a character is an operator
+    this.operationValue = ['+', '-', '*', '/', '(', ')'];
 
-  function keyboardClickBtn(e){
-    let targetbtn;
-    
+    //array to waiting for priority end calculations
+    this.awaitOperation = [];
+    this.awaitValue = [];
+    this.prevKey = {value:'',type:''};
+    this.currNumber = '';
+
+    this.has_dot = false;
+
+    //
+    this.handleKeyDown = this.keyboardClickBtn.bind(this);
+
+    this.init();
+  }
+
+  keyboardClickBtn(e){
     e.preventDefault();
+    this.targetbtn.btnEl = null; //reset
+
     switch(e.key){
-      case 'Enter': targetbtn = calc.querySelector('[data-value="="]')??null; break;
-      case 'Backspace': targetbtn = calc.querySelector('[data-value="backspace"]')??null; break;
-      default:
-        btn.forEach(button=>{
-          if(e.key===button.dataset.value) button.click();
-          });
+      case 'Enter': 
+        this.targetbtn.btnEl = this.calc.querySelector('[data-value="="]') ?? null; 
         break;
+      case 'Backspace': 
+        this.targetbtn.btnEl = this.calc.querySelector('[data-value="backspace"]') ?? null; 
+        break;
+      default:
+        this.btn.forEach(button=>{
+          if(e.key===button.dataset.value) this.targetbtn.btnEl = button;
+        });
+      break;
+    }
+    if(this.targetbtn.btnEl) this.targetbtn.btnEl.click();
   }
-    if(targetbtn) targetbtn.click();
+
+  Parenteses_Open(){
+    if(this.currNumber!=='') {
+      this.awaitValue.push(this.currNumber);
+      if(this.prevKey.type === 'operator') this.awaitOperation.push(this.prevKey.value);
+      else this.awaitOperation.push('*'); // 5*(
+    }
+    //push ( and blank state
+    this.awaitOperation.push('(');
+    this.resultEl.innerText += '(';
+    this.currNumber ='';
+
+    this.prevKey.value = '(';
+    this.prevKey.type = 'operator';
   }
 
-  calc.addEventListener("focusin",e=>{document.addEventListener("keydown",keyboardClickBtn);});
-  calc.addEventListener("focusout",e=>{document.removeEventListener("keydown",keyboardClickBtn);});
+  PrevMultipleOperator(){
+    
+    //shortcut
+    const key = this.targetbtn.key;
 
-  btn.forEach(b=>{
-    b.addEventListener("click",event_c=>{
-      const key = b.dataset.value;
+    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
+    this.resultEl.innerText += key;
+    
+    //uptade stack
+    if(this.awaitOperation.length>0) {
+      this.awaitOperation[this.awaitOperation.length-1] = key;
+    }
+    this.prevKey.value = this.targetbtn.key;
+    this.prevKey.type = this.targetbtn.type;
+  }
 
-      if(!key) {console.error("you must define data-value! ",key," in ",b);return;}
-      
-      if(operationValue.includes(key)){
-        const currPriority = priority[key];
+  SolveStack(currPriority){
+    //shortcut
+    const key = this.targetbtn.key;
+    if(key===')'){ //bug (3)+2-> (3)6+
+      console.log('key === )')
+      while(this.awaitOperation.length > 0){
 
-        //put in stack and return
-        if(key==='('){
-          
-          if(currNumber!=='') {
-            awaitValue.push(currNumber);
-            if(operationValue.includes(prevKey)) awaitOperation.push(prevKey);
-            else awaitOperation.push('*'); // 5*(
-          }
-          //push ( and blank state
-          awaitOperation.push('(');
-          resultEl.innerText += '(';
-          currNumber ='';
-          prevKey = '(';
-          return;
-        }
+        const op = this.awaitOperation.pop();
 
-        //if previous key is also operator
-        if(prevKey && operationValue.includes(prevKey)&& prevKey !=='(' && prevKey!==')'){
-          resultEl.innerText = resultEl.innerText.slice(0,-1);
-          resultEl.innerText += key;
-          //uptade stack
-          if(awaitOperation.length>0) {
-            awaitOperation[awaitOperation.length-1] = key;
-          }
-          prevKey = key;
-          return;
-        }
+        if(op==='(') break;
 
+        const prevVal = this.awaitValue.pop();
+        const expressionStr = `${prevVal==='.'? 0:prevVal} ${op} ${this.currNumber==='.'? 0:prevVal}`;
 
-
-        if(currPriority <= priority[awaitOperation[awaitOperation.length -1]] && prevKey !==')'){
-          if(key===')'){
-            while(awaitOperation.length > 0){
-            const op = awaitOperation.pop();
-
-            if(op==='(') break;
-            const prevVal = awaitValue.pop();
-            const expressionStr = `${prevVal==='.'?0:prevVal}${op}${currNumber==='.'?0:currNumber}`;
-            currNumber = eval(expressionStr);
-          }
-          }
-          else {
-            while(awaitOperation.length > 0 
-            && currPriority <= priority[awaitOperation[awaitOperation.length -1]]){
-              
-              const op = awaitOperation.pop();
-              if(op==='(') {continue;}
-
-              const prevVal = awaitValue.pop();
-              const expressionStr = `${prevVal==='.'?0:prevVal}${op}${currNumber==='.'?0:currNumber}`;
-              currNumber = eval(expressionStr);
-            }
-          }
-          
-          if(key==='=') {
-            prevOpEl.innerText = resultEl.innerText;
-            prevOpEl.innerText += '=';
-            resultEl.innerText = currNumber;
-            awaitValue = [];
-            awaitOperation = [];
-            return;
-          }
-
-          let fullText = resultEl.innerText;
-
-          if(key!==')') {
-            let idx;
-            for(idx=fullText.length-1;idx>0;idx--){
-              if(fullText[idx]==='(') break;
-              if(operationValue.includes(fullText[idx])&&currPriority > priority[fullText[idx]]) break;
-              };
-            resultEl.innerText = fullText.substring(0,idx?idx+1:0) + currNumber;}
-          else {
-            
-            let lastParenteses = fullText.lastIndexOf('(');
-            if (lastParenteses !== -1) { resultEl.innerText = fullText.substring(0,lastParenteses+1) + currNumber;}
-
-            else resultEl.innerText = currNumber;
-          }
-        }
-
-        awaitValue.push(currNumber);
-        if(key!==')' && key!=='=') awaitOperation.push(key);
-        currNumber ='';
-
-        //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
-        if(has_dot) has_dot = false;
-
-        //only add operator if has number on it
-        if(resultEl.innerText.length>=1) resultEl.innerText += key;
+        this.currNumber = eval(expressionStr); //bug
+      }
+      console.log(this.awaitValue);
+    }
+    else {
+      while(
+        this.awaitOperation.length > 0 
+      && currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]){
         
+        const op = this.awaitOperation.pop();
+        if(op==='(') {continue;}
+
+        const prevVal = this.awaitValue.pop();
+        const expressionStr = `${prevVal==='.'? 0:prevVal} ${op} ${this.currNumber==='.'? 0:prevVal}`;
+
+        this.currNumber = eval(expressionStr);
       }
-      else if(key==='backspace'){
-        resultEl.innerText = resultEl.innerText.slice(0,-1);
+    }
+    //change result to prevOpEl and show only result
+    if(key==='=') {
+      this.prevOpEl.innerText = this.resultEl.innerText;
+      this.prevOpEl.innerText += '=';
+      this.resultEl.innerText = this.currNumber;
+      this.awaitValue = [];
+      this.awaitOperation = [];
+      return;
+    }
 
-        const deletedChar = resultEl.innerText.slice(-1);
+    let fullText = this.resultEl.innerText;
 
-        if(operationValue.includes(deletedChar)) {
-          if(awaitOperation.length>0) awaitOperation.pop();
-          //if deleted all number, set current number to what is in stack
-          if(awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
-            currNumber = awaitValue.pop()||'';
-          has_dot = currNumber.includes('.');
-        }else{
-          if(deletedChar==='.') has_dot = false;
-          if(currNumber!=='')currNumber =  currNumber.slice(0,-1);
-        }
-        
+    if(key!==')') {
+      let idx;
+      for(idx=fullText.length-1;idx>0;idx--){
+        if(fullText[idx]==='(') break;
+        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
+        };
+      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
+    else {
+      let lastParenteses = fullText.lastIndexOf('(');
+      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
+
+      else this.resultEl.innerText = this.currNumber;
+    }
+  }
+
+  OperatorHandler(){ // 3)+ -> await value = ''
+    //shortcut
+    const key = this.targetbtn.key;
+
+    const currPriority = this.priority[key];
+
+    // put in stack and end
+    if(key==='(') {this.Parenteses_Open();return;}
+    //if previous key is also operator
+    else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
+    {
+      this.PrevMultipleOperator();
+      return;
+    }
+    else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
+      this.SolveStack(currPriority); 
+    }
+
+    this.awaitValue.push(this.currNumber);
+    console.log(this);
+    if(key !== ')' && key !== '=') this.awaitOperation.push(key);
+    this.currNumber = '';
+
+    //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
+    if(this.has_dot) this.has_dot = false;
+
+    //only add operator if has number on it
+    if(this.resultEl.innerText.length>=1) this.resultEl.innerText += key;
+  }
+
+  Backspace(){
+    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
+
+    const deletedChar = this.resultEl.innerText.slice(-1);
+
+    if(this.operationValue.includes(deletedChar)){
+      if(this.awaitOperation.length>0) this.awaitOperation.pop();
+      //if deleted all number, set current number to what is in stack
+      if(this.awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
+        this.currNumber = this.awaitValue.pop()||'';
+        this.has_dot = this.currNumber.includes('.');
+    }else{
+      if(deletedChar==='.') this.has_dot = false;
+      if(this.currNumber!=='') this.currNumber = this.currNumber.slice(0,-1);
+    } 
+  }
+
+  AddCharInResult(){
+    //shortcut
+    const key = this.targetbtn.key;
+
+    if(key.length===1) {
+      //prevent 1.2.22 float number
+      if(key ==='.') {
+        if(this.has_dot) return;
+        else this.has_dot = true;
       }
-      else if(key.length===1) {
-        //prevent 1.2.22 float number
-        if(key ==='.') {
-          if(has_dot) return;
-          else has_dot = true;
-        }
-        //)5 is invalid, at least need operator
-        if(prevKey===')') return;
+      //)5 is invalid, at least need operator
+      if(this.prevKey.value===')') return;
 
-        //add only key with 1 char
-        resultEl.innerText += key;
-        currNumber += key;
-      }
-      
-      
+      //add only key with 1 char
+      this.resultEl.innerText += key;
+      this.currNumber += key;
+    }
+  }
 
-      prevKey = key;
-    });
-  })
-});
+  CalculatorLogic(e,b){
+    this.targetbtn.btnEl = b;
+    this.targetbtn.key = b.dataset.value ?? null;
+    this.targetbtn.type = b.dataset.type ?? null;
+
+
+    if(!this.targetbtn.key) {console.error("you must define data-value! ",key," in ",b);return;}
+
+    if(this.targetbtn.type && this.targetbtn.type === 'operator') this.OperatorHandler();
+    else if(this.targetbtn.key === 'backspace') this.Backspace();
+    else if(this.targetbtn.key.length === 1) this.AddCharInResult();
+
+    this.prevKey.value = this.targetbtn.key;
+    this.prevKey.type = this.targetbtn.type;
+  }
+
+  init(){
+    //make it interagible
+    this.calc.tabIndex='1';
+
+    this.calc.addEventListener("focusin",e=>{document.addEventListener("keydown",this.keyboardClickBtn);});
+    this.calc.addEventListener("focusout",e=>{document.removeEventListener("keydown",this.keyboardClickBtn);});
+
+    this.btn.forEach(b=>b.addEventListener("click",e=>this.CalculatorLogic(e,b)));
+  }
+}
+
+calculators.forEach(calc=> new CALCULATOR(calc));
 
 
