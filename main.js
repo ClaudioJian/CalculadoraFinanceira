@@ -41,9 +41,9 @@ class CALCULATOR{
     this.currNumber = '';
 
     this.has_dot = false;
-    this.stopEnterOp = false;
 
-    
+    this.displayStr = [];
+
     this.HandleKeyDown = this.HandleKeyDown.bind(this);
 
     this.init();
@@ -191,7 +191,8 @@ class CALCULATOR{
 
         if(op==='(') {
           this.awaitOperation.push('(');
-          break;}
+          break;
+        }
         this.currNumber = this.Solve(op);
       }
     }
@@ -215,16 +216,52 @@ class CALCULATOR{
       }
     }
 
-    this.UptadeUI();
+    //---------------------------------------------------------------------------------------------------------------------------
+    if(key==='=') {
+      console.log('=');
+      this.prevOpEl.innerText = this.resultEl.innerText;
+      this.prevOpEl.innerText += '=';
+      this.resultEl.innerText = this.currNumber;
+      this.awaitValue = [];
+      this.awaitOperation = [];
+      return;
+    }
+
+    let fullText = this.resultEl.innerText;
+
+    if(key!==')') {
+      let idx;
+      for(idx=fullText.length-1;idx>0;idx--){
+        if(fullText[idx]==='(') break;
+        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
+        };
+      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
+    else {
+      let lastParenteses = fullText.lastIndexOf('(');
+      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
+
+      else this.resultEl.innerText = this.currNumber;
+    }
+    //------------------------------------------------------------------------------------------------------------------------
   }
 
   OperatorHandler(){
     //shortcut
     const key = this.targetbtn.key;
 
+    !this.currNumber||this.displayStr.push(this.currNumber);
+    this.displayStr.push(key);
+
+    this.targetbtn.type = 'operator';
+    
     const currPriority = this.priority[key];
 
-    if(this.stopEnterOp) return;
+    if(
+      (this.prevKey.type === 'operator' 
+        && this.awaitOperation[this.awaitOperation.length-1]==='(')
+        && this.awaitValue[this.awaitValue.length-1]!==')'){
+          return;
+        }
 
     // put in stack and end
     if(key==='(') {
@@ -243,6 +280,7 @@ class CALCULATOR{
 
     if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
     if(key !== '=' && key !== ')') this.awaitOperation.push(key);
+    console.log(this.awaitOperation,'awaitOp');
     //push ) to block solve stack
     if(key===')') this.awaitValue.push(')');
 
@@ -256,21 +294,33 @@ class CALCULATOR{
   }
 
   Backspace(){
-
     const deletedChar = this.resultEl.innerText.slice(-1);
     this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
 
+    this.prevKey.type = '';
     if(this.operationValue.includes(deletedChar)){
-      if(this.awaitOperation.length>0) this.awaitOperation.pop();
-      //if deleted all number, set current number to what is in stack
-      if(this.awaitOperation.length>0 && deletedChar!=='(' && deletedChar!==')')
+      if(deletedChar===')') this.awaitValue.pop();
+      else if(this.awaitOperation.length>0) this.awaitOperation.pop();
+
+      
+      if(this.currNumber!==''){
         this.currNumber = this.awaitValue.pop()||'';
-        //convert currNumber to str because it is float now
         this.has_dot = String(this.currNumber).includes('.');
+      }
     }else{
+      //uptade current number
+      this.currNumber = this.currNumber.slice(0,-1);
+      
       if(deletedChar==='.') this.has_dot = false;
-      if(this.currNumber!=='') this.currNumber = this.currNumber.slice(0,-1);
+
+      // when current number is gone but still have operator
+      console.log(this.currNumber);
+      if(this.currNumber===''){
+        this.prevKey.type = 'operator';
+        this.awaitValue.pop();
+      }
     } 
+    this.prevKey.value = this.resultEl.innerText.slice(-1);
   }
 
   AddCharInResult(){
@@ -278,19 +328,22 @@ class CALCULATOR{
     const key = this.targetbtn.key;
 
     if(key.length===1) {
-      this.stopEnterOp = false;
+      //)5 is invalid, at least need operator
+      
+      console.log(this.awaitValue[this.awaitValue.length-1]);
+      //don't know operator is inserted
+      if(this.awaitValue[this.awaitValue.length-1]===')' && this.targetbtn.type!=='operator') return;
       //prevent 1.2.22 float number
       if(key ==='.') {
         if(this.has_dot) return;
         else this.has_dot = true;
       }
-      //)5 is invalid, at least need operator
-      if(this.prevKey.value===')') return;
 
       //add only key with 1 char
       this.resultEl.innerText += key;
       this.currNumber += key;
     }
+    this.targetbtn.type = '';
   }
 
   CalculatorLogic(e,b){
@@ -301,7 +354,7 @@ class CALCULATOR{
     if(!this.targetbtn.key) {console.error("you must define data-value! ",key," in ",b);return;}
 
     if(this.targetbtn.type && this.targetbtn.type === 'operator') this.OperatorHandler();
-    else if(this.targetbtn.key === 'backspace') this.Backspace();
+    else if(this.targetbtn.key === 'backspace') {this.Backspace();return;}
     else if(this.targetbtn.key.length === 1) this.AddCharInResult();
 
     this.prevKey.value = this.targetbtn.key;
