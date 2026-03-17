@@ -21,8 +21,7 @@ class CALCULATOR{
     //attributte to track which button is clicked
     this.targetbtn = {
       key : '',
-      type : '',
-      btnEl : null
+      type : ''
     };
 
     this.priority = {
@@ -42,31 +41,33 @@ class CALCULATOR{
     this.currNumber = '';
 
     this.has_dot = false;
+    this.stopEnterOp = false;
 
-    //
-    this.handleKeyDown = this.HandleKeyDown.bind(this);
+    
+    this.HandleKeyDown = this.HandleKeyDown.bind(this);
 
     this.init();
   }
 
   HandleKeyDown(e){
     e.preventDefault();
-    this.targetbtn.btnEl = null; //reset
+    
+    let btnEl; //reset
 
     switch(e.key){
       case 'Enter': 
-        this.targetbtn.btnEl = this.calc.querySelector('[data-value="="]') ?? null; 
+        btnEl = this.calc.querySelector('[data-value="="]') ?? null; 
         break;
       case 'Backspace': 
-        this.targetbtn.btnEl = this.calc.querySelector('[data-value="backspace"]') ?? null; 
+        btnEl = this.calc.querySelector('[data-value="backspace"]') ?? null; 
         break;
       default:
         this.btn.forEach(button=>{
-          if(e.key===button.dataset.value) this.targetbtn.btnEl = button;
+          if(e.key===button.dataset.value) btnEl = button;
         });
       break;
     }
-    if(this.targetbtn.btnEl) this.targetbtn.btnEl.click();
+    if(btnEl) btnEl.click();
   }
 
   Parenteses_Open(){
@@ -82,10 +83,11 @@ class CALCULATOR{
 
     this.prevKey.value = '(';
     this.prevKey.type = 'operator';
+
+    this.stopEnterOp = true;
   }
 
   PrevMultipleOperator(){
-    
     //shortcut
     const key = this.targetbtn.key;
 
@@ -98,6 +100,64 @@ class CALCULATOR{
     }
     this.prevKey.value = this.targetbtn.key;
     this.prevKey.type = this.targetbtn.type;
+  }
+
+  UptadeUI(){
+    //change result to prevOpEl and show only result
+    if(this.targetbtn.key === '=') {
+      this.prevOpEl.innerText = this.resultEl.innerText;
+      this.prevOpEl.innerText += '=';
+      this.resultEl.innerText = this.currNumber;
+      this.awaitValue = [];
+      this.awaitOperation = [];
+      return;
+    }
+
+    //delete anything inside resultEl.innerText
+    this.resultEl.innerText = '';    
+
+    let continueFlag = [true,true];
+    let idxNum = 0;
+    let idxOp = 0;
+    let targetIdx = 0;
+
+    let targetArray = 'awaitValue';
+
+    //find start point
+    if(this.awaitOperation[0]==='('){
+      this.resultEl.innerText += '(';
+      targetArray = 'awaitOperation';
+      idxOp++;
+    }
+
+    //only stop when ends both array
+    while(continueFlag[0] || continueFlag[1]){
+      if(this[targetArray][targetIdx]){
+        this.resultEl.innerText += this[targetArray][targetIdx];
+      }
+
+      //prevent outbound of array
+      if(idxNum >= this.awaitValue.length-1) continueFlag[0] = false;
+      if(idxOp >= this.awaitOperation.length-1) continueFlag[1] = false;
+
+      
+      if(continueFlag[0] && targetArray === 'awaitValue'){
+        if(this.awaitValue[idxNum] === ')') {
+          this.resultEl.innerText +=')';
+          idxNum++;
+        }
+        targetArray = 'awaitOperation'
+        targetIdx = ++idxNum;
+      }
+      else if(continueFlag[1] && targetArray === 'awaitOperation'){
+        if(this.awaitOperation[idxNum] === '(') {
+          this.resultEl.innerText +='(';
+          idxOp++;
+        }
+        targetArray = 'awaitValue';
+        targetIdx = ++idxOp;
+      }
+    }
   }
 
   Solve(op){
@@ -121,7 +181,6 @@ class CALCULATOR{
   }
 
   SolveStack(currPriority){
-    console.log(this);
     //shortcut
     const key = this.targetbtn.key;
     if(key===')'){
@@ -155,39 +214,17 @@ class CALCULATOR{
         this.currNumber = this.Solve(op);
       }
     }
-    //change result to prevOpEl and show only result
-    if(key==='=') {
-      console.log('=');
-      this.prevOpEl.innerText = this.resultEl.innerText;
-      this.prevOpEl.innerText += '=';
-      this.resultEl.innerText = this.currNumber;
-      this.awaitValue = [];
-      this.awaitOperation = [];
-      return;
-    }
 
-    let fullText = this.resultEl.innerText;
-
-    if(key!==')') {
-      let idx;
-      for(idx=fullText.length-1;idx>0;idx--){
-        if(fullText[idx]==='(') break;
-        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
-        };
-      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
-    else {
-      let lastParenteses = fullText.lastIndexOf('(');
-      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
-
-      else this.resultEl.innerText = this.currNumber;
-    }
+    this.UptadeUI();
   }
 
-  OperatorHandler(){ //bug: 3)+ -> await value = ''
+  OperatorHandler(){
     //shortcut
     const key = this.targetbtn.key;
 
     const currPriority = this.priority[key];
+
+    if(this.stopEnterOp) return;
 
     // put in stack and end
     if(key==='(') {
@@ -216,7 +253,6 @@ class CALCULATOR{
 
     //only add operator if has number on it
     if(this.resultEl.innerText.length>=1) this.resultEl.innerText += key;
-    console.log(this,"final this");
   }
 
   Backspace(){
@@ -242,6 +278,7 @@ class CALCULATOR{
     const key = this.targetbtn.key;
 
     if(key.length===1) {
+      this.stopEnterOp = false;
       //prevent 1.2.22 float number
       if(key ==='.') {
         if(this.has_dot) return;
@@ -257,7 +294,6 @@ class CALCULATOR{
   }
 
   CalculatorLogic(e,b){
-    this.targetbtn.btnEl = b;
     this.targetbtn.key = b.dataset.value ?? null;
     this.targetbtn.type = b.dataset.type ?? null;
 
