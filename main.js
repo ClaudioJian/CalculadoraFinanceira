@@ -78,7 +78,9 @@ class CALCULATOR{
     }
     //push ( and blank state
     this.awaitOperation.push('(');
+    this.displayStr.push('(');
     this.resultEl.innerText += '(';
+
     this.currNumber ='';
 
     this.prevKey.value = '(';
@@ -91,93 +93,91 @@ class CALCULATOR{
     //shortcut
     const key = this.targetbtn.key;
 
-    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
-    this.resultEl.innerText += key;
     
     //uptade stack
     if(this.awaitOperation.length>0) {
       this.awaitOperation[this.awaitOperation.length-1] = key;
     }
+
     this.prevKey.value = this.targetbtn.key;
     this.prevKey.type = this.targetbtn.type;
+
+    this.displayStr.pop();
+    this.displayStr.push(key);
+    this.UptadeUI();
+  }
+
+  ResetData(){
+    this.awaitValue = [];
+    this.awaitOperation = [];
+    this.displayStr = [];
+    this.prevKey = {value:'',type:''};
+    this.targetbtn = {key:'',type:''};
+
+    this.currNumber = '';
   }
 
   UptadeUI(){
     //change result to prevOpEl and show only result
     if(this.targetbtn.key === '=') {
+      const result = this.currNumber;
       this.prevOpEl.innerText = this.resultEl.innerText;
       this.prevOpEl.innerText += '=';
-      this.resultEl.innerText = this.currNumber;
-      this.awaitValue = [];
-      this.awaitOperation = [];
-      return;
-    }
+      this.resultEl.innerText = result;
 
-    //delete anything inside resultEl.innerText
-    this.resultEl.innerText = '';    
+      this.ResetData();
 
-    let continueFlag = [true,true];
-    let idxNum = 0;
-    let idxOp = 0;
-    let targetIdx = 0;
+      //push result to stack
+      this.awaitValue.push(result);
+      this.displayStr.push(result);
+    }else{
+      this.resultEl.innerText = '';
 
-    let targetArray = 'awaitValue';
-
-    //find start point
-    if(this.awaitOperation[0]==='('){
-      this.resultEl.innerText += '(';
-      targetArray = 'awaitOperation';
-      idxOp++;
-    }
-
-    //only stop when ends both array
-    while(continueFlag[0] || continueFlag[1]){
-      if(this[targetArray][targetIdx]){
-        this.resultEl.innerText += this[targetArray][targetIdx];
-      }
-
-      //prevent outbound of array
-      if(idxNum >= this.awaitValue.length-1) continueFlag[0] = false;
-      if(idxOp >= this.awaitOperation.length-1) continueFlag[1] = false;
-
-      
-      if(continueFlag[0] && targetArray === 'awaitValue'){
-        if(this.awaitValue[idxNum] === ')') {
-          this.resultEl.innerText +=')';
-          idxNum++;
-        }
-        targetArray = 'awaitOperation'
-        targetIdx = ++idxNum;
-      }
-      else if(continueFlag[1] && targetArray === 'awaitOperation'){
-        if(this.awaitOperation[idxNum] === '(') {
-          this.resultEl.innerText +='(';
-          idxOp++;
-        }
-        targetArray = 'awaitValue';
-        targetIdx = ++idxOp;
-      }
+      this.displayStr.forEach(s=>{
+        this.resultEl.innerText +=s;
+      });
     }
   }
 
   Solve(op){
+    if(op === ')') {
+      this.displayStr.pop();
+      return this.currNumber;
+    }
+
     let prevVal = this.awaitValue.pop();
-    //ignore ) if exist
-    if(prevVal === '('||prevVal === ')') prevVal = this.awaitValue.pop();
+    let result;
     
     prevVal = prevVal === '.' ? 0 : parseFloat(prevVal);
-    this.currNumber = this.currNumber === '.' ? 0 : parseFloat(this.currNumber); 
+
+    //if is empty string, mean before is operator, then it aldery is in stack, need pull out
+    if(this.currNumber === ''){
+      this.currNumber = prevVal;
+      prevVal = parseFloat(this.awaitValue.pop());
+      this.displayStr.pop();
+    }
+    else this.currNumber = this.currNumber === '.' 
+      ? 0 
+      : parseFloat(this.currNumber); 
+    
 
     if(isNaN(prevVal)) return this.currNumber;
 
+    
     switch(op){
-      case ')':
-      case '(': break;
-      case '*' : return prevVal * this.currNumber;
-      case '/' : return prevVal / this.currNumber;
-      case '+': return prevVal + this.currNumber;
-      case '-': return prevVal - this.currNumber;
+      case '*' : result = prevVal * this.currNumber; break;
+      case '/' : result = prevVal / this.currNumber; break;
+      case '+': result = prevVal + this.currNumber; break;
+      case '-': result = prevVal - this.currNumber; break;
     }
+
+    
+    //pop 3 time displayStr
+    for(let i = 0;i<2;i++) {
+      const deleted = this.displayStr.pop();
+      if(deleted==='(') this.displayStr.pop();
+    };
+    return result;
   }
 
   SolveStack(currPriority){
@@ -186,13 +186,9 @@ class CALCULATOR{
     if(key===')'){
       //solve all stack until hit (
       while(this.awaitOperation.length > 0){
-
         const op = this.awaitOperation.pop();
 
-        if(op==='(') {
-          this.awaitOperation.push('(');
-          break;
-        }
+        if(op==='(') break;
         this.currNumber = this.Solve(op);
       }
     }
@@ -200,125 +196,116 @@ class CALCULATOR{
       while(
         this.awaitOperation.length > 0 
       && currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]] 
-    ){
-        //solve until hit wall of await value ')'
-        if(this.awaitValue[this.awaitValue.length -1] === ')' && key !== '=') break;
-
+      ){
+        
         const op = this.awaitOperation.pop();
-
+        //solve until hit wall of await value ')', check if op before is ')' then push back
+        if(this.awaitOperation[this.awaitOperation.length -1] === ')' && key !== '=') {
+          this.awaitOperation.push(op);
+          return;
+        }
         //solve until end of array if is =
-        if(op==='(') {
+        if(op==='('||op===')') {
           if(key === '=') continue; else break;
         }
         //remove ) from stack and skip this
-        
+        // uptade displayStr, deleting number op number to replace with result
         this.currNumber = this.Solve(op);
       }
     }
-
-    //---------------------------------------------------------------------------------------------------------------------------
-    if(key==='=') {
-      console.log('=');
-      this.prevOpEl.innerText = this.resultEl.innerText;
-      this.prevOpEl.innerText += '=';
-      this.resultEl.innerText = this.currNumber;
-      this.awaitValue = [];
-      this.awaitOperation = [];
-      return;
-    }
-
-    let fullText = this.resultEl.innerText;
-
-    if(key!==')') {
-      let idx;
-      for(idx=fullText.length-1;idx>0;idx--){
-        if(fullText[idx]==='(') break;
-        if(this.operationValue.includes(fullText[idx]) && currPriority > this.priority[fullText[idx]]) break;
-        };
-      this.resultEl.innerText = fullText.substring(0,idx?idx+1:0) + this.currNumber;}
-    else {
-      let lastParenteses = fullText.lastIndexOf('(');
-      if (lastParenteses !== -1) { this.resultEl.innerText = fullText.substring(0,lastParenteses+1) + this.currNumber;}
-
-      else this.resultEl.innerText = this.currNumber;
-    }
-    //------------------------------------------------------------------------------------------------------------------------
   }
 
-  OperatorHandler(){
+  AppendDisplayStr(){
+    (!this.currNumber)||this.displayStr.push(this.currNumber);
+  }
+
+  OperatorCases(currPriority){
+    //return: 0 continue 1 leave
     //shortcut
     const key = this.targetbtn.key;
-
-    !this.currNumber||this.displayStr.push(this.currNumber);
-    this.displayStr.push(key);
-
-    this.targetbtn.type = 'operator';
-    
-    const currPriority = this.priority[key];
-
-    if(
-      (this.prevKey.type === 'operator' 
-        && this.awaitOperation[this.awaitOperation.length-1]==='(')
-        && this.awaitValue[this.awaitValue.length-1]!==')'){
-          return;
-        }
 
     // put in stack and end
     if(key==='(') {
       this.Parenteses_Open(); 
-      return;
+      return 1;
     }
     //if previous key is also operator
     else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
     {
       this.PrevMultipleOperator();
-      return;
+      return 1;
     }
     else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
       this.SolveStack(currPriority); 
+      return 0;
     }
+  }
+
+  OperatorHandler(){
+    //shortcut
+    const key = this.targetbtn.key;
+    
+    this.targetbtn.type = 'operator';
+    
+    const currPriority = this.priority[key];
+
+    //avoid operators after (
+    if(this.prevKey.type === 'operator' 
+        && this.awaitOperation[this.awaitOperation.length-1]==='('){
+          return;
+        }
+
+    if(this.OperatorCases(currPriority)) return;
+
+    this.AppendDisplayStr();
+    
 
     if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
-    if(key !== '=' && key !== ')') this.awaitOperation.push(key);
-    console.log(this.awaitOperation,'awaitOp');
-    //push ) to block solve stack
-    if(key===')') this.awaitValue.push(')');
-
-    this.currNumber = '';
+    
+    if(key !== '=') this.awaitOperation.push(key);
 
     //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
     if(this.has_dot) this.has_dot = false;
 
+
     //only add operator if has number on it
-    if(this.resultEl.innerText.length>=1) this.resultEl.innerText += key;
+    if(this.resultEl.innerText.length>=1 && key !== '=') {
+      this.resultEl.innerText += key;
+      this.displayStr.push(key);
+    }
+
+    this.UptadeUI();
+    this.currNumber = '';
   }
 
   Backspace(){
     const deletedChar = this.resultEl.innerText.slice(-1);
+    if(!deletedChar) return;
+
     this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
 
     this.prevKey.type = '';
-    if(this.operationValue.includes(deletedChar)){
-      if(deletedChar===')') this.awaitValue.pop();
-      else if(this.awaitOperation.length>0) this.awaitOperation.pop();
 
-      
-      if(this.currNumber!==''){
-        this.currNumber = this.awaitValue.pop()||'';
-        this.has_dot = String(this.currNumber).includes('.');
-      }
+    this.displayStr.pop();
+
+    if(this.operationValue.includes(deletedChar)){
+      if(this.awaitOperation.length>0) this.awaitOperation.pop();
+
+      this.currNumber = this.awaitValue.pop()||'';
+      this.has_dot = String(this.currNumber).includes('.');
+      // value is in currValue now
+      this.displayStr.pop();
     }else{
       //uptade current number
-      this.currNumber = this.currNumber.slice(0,-1);
+      this.currNumber = String(this.currNumber).slice(0,-1);
       
       if(deletedChar==='.') this.has_dot = false;
 
       // when current number is gone but still have operator
-      console.log(this.currNumber);
       if(this.currNumber===''){
         this.prevKey.type = 'operator';
-        this.awaitValue.pop();
       }
+      if(this.currNumber!=='') this.displayStr.push(this.currNumber);
     } 
     this.prevKey.value = this.resultEl.innerText.slice(-1);
   }
@@ -329,10 +316,8 @@ class CALCULATOR{
 
     if(key.length===1) {
       //)5 is invalid, at least need operator
-      
-      console.log(this.awaitValue[this.awaitValue.length-1]);
-      //don't know operator is inserted
-      if(this.awaitValue[this.awaitValue.length-1]===')' && this.targetbtn.type!=='operator') return;
+
+      if(this.awaitOperation[this.awaitOperation.length-1]===')') return;
       //prevent 1.2.22 float number
       if(key ==='.') {
         if(this.has_dot) return;
@@ -371,7 +356,9 @@ class CALCULATOR{
     this.btn.forEach(b=>b.addEventListener("click",e=>this.CalculatorLogic(e,b)));
   }
 }
-//functions js
+
+
+//---------------------------------------functions js---------------------------------------------------
 
 function ElementBubbleSort(elementList){
   for(let i=0;i<elementList.length;i++){
