@@ -13,6 +13,8 @@ class CALCULATOR{
   constructor(calc){
     this.calc = calc;
 
+    this.displayStr = [];
+
     //element
     this.btn = this.calc.querySelectorAll('[data-value]');
     this.resultEl = this.calc.querySelector('[data-for="result"]');
@@ -24,6 +26,9 @@ class CALCULATOR{
       type : ''
     };
 
+    // Helper array to check if a character is an operator
+    this.operationValue = ['+', '-', '*', '/', '(', ')'];
+
     this.priority = {
       '=' : -99,
       '(' : -1, ')': -2,
@@ -31,19 +36,14 @@ class CALCULATOR{
       '*' : 2, '/' : 2,
     }
 
-    // Helper array to check if a character is an operator
-    this.operationValue = ['+', '-', '*', '/', '(', ')'];
+    this.currNumber = '';
+    this.has_dot = false;
+    this.prevKey = {value:'',type:''};
 
     //array to waiting for priority end calculations
     this.awaitOperation = [];
     this.awaitValue = [];
-    this.prevKey = {value:'',type:''};
-    this.currNumber = '';
-
-    this.has_dot = false;
-
-    this.displayStr = [];
-
+    
     this.HandleKeyDown = this.HandleKeyDown.bind(this);
 
     this.init();
@@ -89,7 +89,7 @@ class CALCULATOR{
     this.stopEnterOp = true;
   }
 
-  PrevMultipleOperator(){
+  PrevMultipleOperator(currPriority){
     //shortcut
     const key = this.targetbtn.key;
 
@@ -97,13 +97,13 @@ class CALCULATOR{
     //uptade stack
     if(this.awaitOperation.length>0) {
       this.awaitOperation[this.awaitOperation.length-1] = key;
+      this.displayStr[this.displayStr.length-1] = key;
     }
 
     this.prevKey.value = this.targetbtn.key;
     this.prevKey.type = this.targetbtn.type;
 
-    this.displayStr.pop();
-    this.displayStr.push(key);
+    if(key === '=') this.SolveStack(currPriority);
     this.UptadeUI();
   }
 
@@ -121,15 +121,18 @@ class CALCULATOR{
     //change result to prevOpEl and show only result
     if(this.targetbtn.key === '=') {
       const result = this.currNumber;
-      this.prevOpEl.innerText = this.resultEl.innerText;
-      this.prevOpEl.innerText += '=';
+      //pull real display str to prevOp
+      this.prevOpEl.innerText = this.resultEl.innerText + '=';
       this.resultEl.innerText = result;
 
       this.ResetData();
 
       //push result to stack
-      this.awaitValue.push(result);
-      this.displayStr.push(result);
+      !result||this.awaitValue.push(result);
+      !result||this.displayStr.push(result);
+      this.has_dot = toString(this.currNumber).includes('.') 
+        ? this.has_dot = true
+        : this.has_dot = false;
     }else{
       this.resultEl.innerText = '';
 
@@ -154,7 +157,7 @@ class CALCULATOR{
     if(this.currNumber === ''){
       this.currNumber = prevVal;
       prevVal = parseFloat(this.awaitValue.pop());
-      this.displayStr.pop();
+      if(this.targetbtn.key !== '=') this.displayStr.pop();
     }
     else this.currNumber = this.currNumber === '.' 
       ? 0 
@@ -232,7 +235,7 @@ class CALCULATOR{
     //if previous key is also operator
     else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
     {
-      this.PrevMultipleOperator();
+      this.PrevMultipleOperator(currPriority);
       return 1;
     }
     else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
