@@ -71,22 +71,19 @@ class CALCULATOR{
   }
 
   Parenteses_Open(){
-    if(this.currNumber!=='') {
-      this.awaitValue.push(this.currNumber);
-      if(this.prevKey.type === 'operator') this.awaitOperation.push(this.prevKey.value);
-      else this.awaitOperation.push('*'); // 5*(
-    }
-    //push ( and blank state
-    this.awaitOperation.push('(');
-    this.displayStr.push('(');
-    this.resultEl.innerText += '(';
+      if(
+        (this.prevKey.value === ')')
+        ||(this.prevKey.type !== 'operator' && this.currNumber !== '')
+      ) this.awaitOperation.push('*'); // 5*(
+
+    this.AppendDisplayStr();
+
+    this.UptadeUI();
 
     this.currNumber ='';
 
     this.prevKey.value = '(';
     this.prevKey.type = 'operator';
-
-    this.stopEnterOp = true;
   }
 
   PrevMultipleOperator(currPriority){
@@ -96,14 +93,27 @@ class CALCULATOR{
     
     //uptade stack
     if(this.awaitOperation.length>0) {
-      this.awaitOperation[this.awaitOperation.length-1] = key;
-      this.displayStr[this.displayStr.length-1] = key;
+      this.awaitOperation.pop();
+      this.displayStr.pop();
+      if(key!=='=') {
+        this.awaitOperation.push(key);
+        this.displayStr.push(key);
+      }
     }
 
     this.prevKey.value = this.targetbtn.key;
     this.prevKey.type = this.targetbtn.type;
 
-    if(key === '=') this.SolveStack(currPriority);
+    if(key === '='){
+      this.resultEl.innerText = '';
+
+      this.displayStr.forEach(s=>{
+        this.resultEl.innerText +=s;
+      });
+
+      this.SolveStack(currPriority);
+    }
+
     this.UptadeUI();
   }
 
@@ -120,7 +130,7 @@ class CALCULATOR{
   UptadeUI(){
     //change result to prevOpEl and show only result
     if(this.targetbtn.key === '=') {
-      const result = this.currNumber;
+      const result = this.currNumber||this.awaitValue.pop();
       //pull real display str to prevOp
       this.prevOpEl.innerText = this.resultEl.innerText + '=';
       this.resultEl.innerText = result;
@@ -219,7 +229,23 @@ class CALCULATOR{
   }
 
   AppendDisplayStr(){
+    const key = this.targetbtn.key;
+
     (!this.currNumber)||this.displayStr.push(this.currNumber);
+
+    if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
+    
+    if(key !== '=') this.awaitOperation.push(key);
+
+    //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
+    if(this.has_dot) this.has_dot = false;
+
+
+    //only add operator if has number on it
+    if(key === '(' ||(this.resultEl.innerText.length>=1 && key !== '=')) {
+      this.resultEl.innerText += key;
+      this.displayStr.push(key);
+    }
   }
 
   OperatorCases(currPriority){
@@ -261,21 +287,6 @@ class CALCULATOR{
     if(this.OperatorCases(currPriority)) return;
 
     this.AppendDisplayStr();
-    
-
-    if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
-    
-    if(key !== '=') this.awaitOperation.push(key);
-
-    //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
-    if(this.has_dot) this.has_dot = false;
-
-
-    //only add operator if has number on it
-    if(this.resultEl.innerText.length>=1 && key !== '=') {
-      this.resultEl.innerText += key;
-      this.displayStr.push(key);
-    }
 
     this.UptadeUI();
     this.currNumber = '';
