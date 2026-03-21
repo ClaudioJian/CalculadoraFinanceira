@@ -31,7 +31,7 @@ class CALCULATOR{
 
     this.priority = {
       '=' : -99,
-      '(' : -1, ')': -2,
+      '(' : -2, ')': -1,
       '+' : 1, '-' : 1,
       '*' : 2, '/' : 2,
     }
@@ -71,63 +71,45 @@ class CALCULATOR{
   }
 
   Parenteses_Open(){
-      if(
-        (this.prevKey.value === ')')
-        ||(this.prevKey.type !== 'operator' && this.currNumber !== '')
-      ) this.awaitOperation.push('*'); // 5*(
-
-    this.AppendDisplayStr();
-
-    this.UptadeUI();
-
-    this.currNumber ='';
-
-    this.prevKey.value = '(';
-    this.prevKey.type = 'operator';
+    if(
+      (this.prevKey.value === ')')
+      ||(this.prevKey.type !== 'operator' && this.currNumber !== '')
+    ) {
+      this.awaitOperation.push('*');
+      this.displayStr.push('');
+    }// 5*(
   }
 
-  PrevMultipleOperator(currPriority){
+  PrevMultipleOperator(){
     //shortcut
     const key = this.targetbtn.key;
-
     
-    //uptade stack
+    //update stack
     if(this.awaitOperation.length>0) {
       this.awaitOperation.pop();
       this.displayStr.pop();
-      if(key!=='=') {
-        this.awaitOperation.push(key);
-        this.displayStr.push(key);
-      }
     }
 
-    this.prevKey.value = this.targetbtn.key;
+    this.prevKey.value = key;
     this.prevKey.type = this.targetbtn.type;
 
-    if(key === '='){
+    if(key==='=') {
       this.resultEl.innerText = '';
-
-      this.displayStr.forEach(s=>{
-        this.resultEl.innerText +=s;
-      });
-
-      this.SolveStack(currPriority);
+      this.displayStr.forEach(s=>this.resultEl.innerText+=s);
     }
-
-    this.UptadeUI();
   }
 
   ResetData(){
     this.awaitValue = [];
     this.awaitOperation = [];
     this.displayStr = [];
-    this.prevKey = {value:'',type:''};
+    if(this.targetbtn.key!=='=') this.currNumber = '';
     this.targetbtn = {key:'',type:''};
 
-    this.currNumber = '';
+    
   }
 
-  UptadeUI(){
+  UpdateUI(){
     //change result to prevOpEl and show only result
     if(this.targetbtn.key === '=') {
       const result = this.currNumber||this.awaitValue.pop();
@@ -137,12 +119,7 @@ class CALCULATOR{
 
       this.ResetData();
 
-      //push result to stack
-      !result||this.awaitValue.push(result);
-      !result||this.displayStr.push(result);
-      this.has_dot = toString(this.currNumber).includes('.') 
-        ? this.has_dot = true
-        : this.has_dot = false;
+      this.has_dot = toString(this.currNumber).includes('.');
     }else{
       this.resultEl.innerText = '';
 
@@ -153,21 +130,18 @@ class CALCULATOR{
   }
 
   Solve(op){
-    if(op === ')') {
-      this.displayStr.pop();
-      return this.currNumber;
-    }
-
     let prevVal = this.awaitValue.pop();
     let result;
+    let deleted;
     
     prevVal = prevVal === '.' ? 0 : parseFloat(prevVal);
 
-    //if is empty string, mean before is operator, then it aldery is in stack, need pull out
+    //if is empty string, mean before is operator, then it alredy is in stack, need pull out. example: (2)+...
     if(this.currNumber === ''){
       this.currNumber = prevVal;
       prevVal = parseFloat(this.awaitValue.pop());
-      if(this.targetbtn.key !== '=') this.displayStr.pop();
+      if(this.targetbtn.key !== '=') deleted = this.displayStr.pop();
+      if(deleted === ')'|| deleted ==='(') this.displayStr.pop();
     }
     else this.currNumber = this.currNumber === '.' 
       ? 0 
@@ -185,46 +159,33 @@ class CALCULATOR{
     }
 
     
-    //pop 3 time displayStr
+    //pop 2 time displayStr
     for(let i = 0;i<2;i++) {
-      const deleted = this.displayStr.pop();
-      if(deleted==='(') this.displayStr.pop();
+      const deletedS = this.displayStr.pop();
+      if(deletedS==='('||deletedS===')') this.displayStr.pop();
     };
     return result;
   }
 
-  SolveStack(currPriority){
+  SolveStack(){
     //shortcut
     const key = this.targetbtn.key;
-    if(key===')'){
-      //solve all stack until hit (
-      while(this.awaitOperation.length > 0){
-        const op = this.awaitOperation.pop();
+    const currPriority = this.priority[key];
+    let op;
 
-        if(op==='(') break;
-        this.currNumber = this.Solve(op);
+    while(this.awaitOperation.length > 0 ){
+      op = this.awaitOperation.pop();
+
+      if(op === '(' && key=== '=') continue;
+
+      if(currPriority > this.priority[op]){
+        if(key !==')')this.awaitOperation.push(op);
+        break;
       }
-    }
-    else {
-      while(
-        this.awaitOperation.length > 0 
-      && currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]] 
-      ){
-        
-        const op = this.awaitOperation.pop();
-        //solve until hit wall of await value ')', check if op before is ')' then push back
-        if(this.awaitOperation[this.awaitOperation.length -1] === ')' && key !== '=') {
-          this.awaitOperation.push(op);
-          return;
-        }
-        //solve until end of array if is =
-        if(op==='('||op===')') {
-          if(key === '=') continue; else break;
-        }
-        //remove ) from stack and skip this
-        // uptade displayStr, deleting number op number to replace with result
-        this.currNumber = this.Solve(op);
-      }
+
+      //remove ) from stack and skip this
+      // update displayStr, deleting number op number to replace with result
+      this.currNumber = this.Solve(op);
     }
   }
 
@@ -233,63 +194,55 @@ class CALCULATOR{
 
     (!this.currNumber)||this.displayStr.push(this.currNumber);
 
-    if(this.currNumber !== '') this.awaitValue.push(this.currNumber);
+    (!this.currNumber)||this.awaitValue.push(this.currNumber);
     
-    if(key !== '=') this.awaitOperation.push(key);
+    //prevent ) or = push into awaitoperation
+    if(key !==')') this.awaitOperation.push(key);
 
     //flip has dot to active for next number, only do after check key==='=' to prevent next number forgot .
     if(this.has_dot) this.has_dot = false;
 
 
     //only add operator if has number on it
-    if(key === '(' ||(this.resultEl.innerText.length>=1 && key !== '=')) {
+    if(key === '(' ||(this.resultEl.innerText.length>=1)) {
       this.resultEl.innerText += key;
       this.displayStr.push(key);
     }
   }
 
-  OperatorCases(currPriority){
+  OperatorCases(){
     //return: 0 continue 1 leave
     //shortcut
     const key = this.targetbtn.key;
+    const swappablePrevOp = ['+','-','*','/'];
+    const swappableOp =  ['+','-','*','/',')','='];
 
     // put in stack and end
     if(key==='(') {
       this.Parenteses_Open(); 
-      return 1;
-    }
-    //if previous key is also operator
-    else if((this.prevKey.value && this.prevKey.type==='operator') && this.prevKey.value !=='(' && this.prevKey.value!==')') 
-    {
-      this.PrevMultipleOperator(currPriority);
-      return 1;
-    }
-    else if(currPriority <= this.priority[this.awaitOperation[this.awaitOperation.length -1]]) {
-      this.SolveStack(currPriority); 
       return 0;
     }
+    //if previous key is also operator and can be swap like +- to -
+    else if(swappableOp.includes(key)&&swappablePrevOp.includes(this.prevKey.value)) this.PrevMultipleOperator();
+
+    this.SolveStack(); 
+      
+    return 0;
   }
 
   OperatorHandler(){
-    //shortcut
     const key = this.targetbtn.key;
-    
     this.targetbtn.type = 'operator';
-    
-    const currPriority = this.priority[key];
 
     //avoid operators after (
-    if(this.prevKey.type === 'operator' 
-        && this.awaitOperation[this.awaitOperation.length-1]==='('){
-          return;
-        }
+    if(this.prevKey.value === '(') return 1;
 
-    if(this.OperatorCases(currPriority)) return;
+    if(this.OperatorCases()) return 0;
 
-    this.AppendDisplayStr();
+    if(key!=='=') this.AppendDisplayStr();
 
-    this.UptadeUI();
-    this.currNumber = '';
+    this.UpdateUI();
+    if(key!=='=') this.currNumber = '';
   }
 
   Backspace(){
@@ -310,7 +263,7 @@ class CALCULATOR{
       // value is in currValue now
       this.displayStr.pop();
     }else{
-      //uptade current number
+      //update current number
       this.currNumber = String(this.currNumber).slice(0,-1);
       
       if(deletedChar==='.') this.has_dot = false;
@@ -322,11 +275,14 @@ class CALCULATOR{
       if(this.currNumber!=='') this.displayStr.push(this.currNumber);
     } 
     this.prevKey.value = this.resultEl.innerText.slice(-1);
+    return 1;
   }
 
   AddCharInResult(){
     //shortcut
     const key = this.targetbtn.key;
+
+    if(this.prevKey.value===')') return 1;
 
     if(key.length===1) {
       //)5 is invalid, at least need operator
@@ -343,25 +299,29 @@ class CALCULATOR{
       this.currNumber += key;
     }
     this.targetbtn.type = '';
+    return 0;
   }
 
   CalculatorLogic(e,b){
+    let returnCode = 0;
     this.targetbtn.key = b.dataset.value ?? null;
     this.targetbtn.type = b.dataset.type ?? null;
 
 
-    if(!this.targetbtn.key) {console.error("you must define data-value! ",key," in ",b);return;}
+    if(!this.targetbtn.key) {console.error("you must define data-value! ",targetbtn.key," in ",b);return;}
 
-    if(this.targetbtn.type && this.targetbtn.type === 'operator') this.OperatorHandler();
-    else if(this.targetbtn.key === 'backspace') {this.Backspace();return;}
-    else if(this.targetbtn.key.length === 1) this.AddCharInResult();
+    if(this.targetbtn.type && this.targetbtn.type === 'operator') returnCode = this.OperatorHandler();
+    else if(this.targetbtn.key === 'backspace') returnCode = this.Backspace();
+    else if(this.targetbtn.key.length === 1) returnCode = this.AddCharInResult();
+
+    if(returnCode) return;
 
     this.prevKey.value = this.targetbtn.key;
     this.prevKey.type = this.targetbtn.type;
   }
 
   init(){
-    //make it interagible
+    //make it interactable
     this.calc.tabIndex='1';
 
     this.calc.addEventListener("focusin",e=>{document.addEventListener("keydown",this.HandleKeyDown);});
@@ -682,36 +642,6 @@ function ResetPos(El){
 
   setting.resizedSize = resized;
   localStorage.setItem(`${storageName}Size`,JSON.stringify(setting));
-}
-
-//calculator
-function CalculatorLogic(calc){
-  //elements
-  const resultEl = calc.querySelector('[data-for="result"]');
-  const prevOpEl = calc.querySelector('[data-for="previousoperation"]');
-
-  //all operation
-  const operation = calc.querySelectorAll('[data-type="operator"]');
-  const operationValue = [];
-  operation.forEach(op=>operationValue.push(op.dataset.value)); 
-
-  //array to waiting for priority end calculations
-  let awaitOperation =[];
-  let awaitValue = [];
-  let prevKey;
-  let currNumber = '';
-
-  //operators weight
-  const priority = {
-    '*':2 , '/':2,
-    '+':1,'-':1,
-    '=':-99,
-    '(':-1, ')':-2
-  };
-  //flags
-  let has_dot = false;
-
-
 }
 
 //variable global
