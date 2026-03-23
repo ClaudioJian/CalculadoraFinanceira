@@ -249,32 +249,49 @@ class CALCULATOR{
     const deletedChar = this.resultEl.innerText.slice(-1);
     if(!deletedChar) return;
 
-    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
-
-    this.prevKey.type = '';
-
     this.displayStr.pop();
 
     if(this.operationValue.includes(deletedChar)){
-      if(this.awaitOperation.length>0) this.awaitOperation.pop();
+      //buffer to store all operator until hit '(' and restore it back to awaitOperation
+      const bufferOp = [];
+      if(deletedChar===')'){
+        for(let i = this.displayStr.length-1; i>=0;i--){
+          const prevStr = this.displayStr[i];
+          // avoid (5+(5)) immedialy push back ( to await op even is alredy solved
+          if(prevStr===')'){
+            //since ) mean alredy solved, skip 2(1 will be remove automatically) index to skip (. also we need avoid 5)+2) situation
+            i -= this.displayStr[i-3] === '(' ? 2:1;
+          }
+          else if(prevStr!=='(' && this.operationValue.includes(prevStr)){
+            const delOp = this.awaitOperation.pop();
+            bufferOp.push(delOp);
+          }else if(prevStr==='('){
+            this.awaitOperation.push('(');
+            for(const op of bufferOp.reverse()){this.awaitOperation.push(op);}
+          }
+        }
+      }else{
+        if(this.awaitOperation.length>0) this.awaitOperation.pop();
 
-      this.currNumber = this.awaitValue.pop()||'';
-      this.has_dot = String(this.currNumber).includes('.');
-      // value is in currValue now
-      this.displayStr.pop();
+        this.currNumber = this.awaitValue.pop()||'';
+        this.has_dot = String(this.currNumber).includes('.');
+        // value is in currValue now and displaystr isn't in display yet, currNumber will only be pushed in displayStr if user press operator
+        this.displayStr.pop();
+      }
     }else{
       //update current number
       this.currNumber = String(this.currNumber).slice(0,-1);
       
       if(deletedChar==='.') this.has_dot = false;
 
-      // when current number is gone but still have operator
-      if(this.currNumber===''){
-        this.prevKey.type = 'operator';
-      }
       if(this.currNumber!=='') this.displayStr.push(this.currNumber);
     } 
-    this.prevKey.value = this.resultEl.innerText.slice(-1);
+
+    const prevStr = this.displayStr[this.displayStr.length-1];
+    this.prevKey.value = prevStr.slice(-1);
+    this.prevKey.type = this.operationValue.includes(prevStr) ? 'operator':'';
+
+    this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
     return 1;
   }
 
