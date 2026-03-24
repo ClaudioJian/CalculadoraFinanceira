@@ -161,16 +161,24 @@ class CALCULATOR{
       case '-': result = prevVal - this.currNumber; break;
     }
 
-    
-    //pop 2 time displayStr
-    for(let i = 0;i<2;i++) {
-      const deletedS = this.displayStr.pop();
-      if(deletedS==='('||deletedS===')') {
-        const prevStr = this.displayStr[this.displayStr.length-1];
-        this.displayStr.pop();
+    result = String(result);
 
-        if(prevStr===''||this.operationValue.includes(prevStr)) this.displayStr.pop();
+    let openParenteses = false;
+    let endFlag = false;
+    //
+    while(this.displayStr.length>0) {
+      const deletedS = this.displayStr.pop();
+      if(!deletedS) break;
+      //delete '(' only when it is paired with ')'
+      if(deletedS === ')') {
+        openParenteses = true; continue;
       }
+      if(deletedS === String(prevVal) && openParenteses) {
+        this.displayStr.pop();
+        openParenteses = false;
+      } 
+      if(endFlag) break;
+      if(this.operationValue.includes(deletedS) && deletedS!=='(' && deletedS!==')') endFlag = true;
     };
     return result;
   }
@@ -243,7 +251,7 @@ class CALCULATOR{
     this.targetbtn.type = 'operator';
 
     //avoid operators after (
-    if(this.prevKey.value === '(') return 1;
+    if(this.prevKey.value === '(' && key !== '(') return 1;
 
     if(this.OperatorCases()) return 0;
 
@@ -269,26 +277,35 @@ class CALCULATOR{
     }
   }
 
+  DeleteParenteses_open(deleted){
+    if(deleted === ''){
+      this.awaitOperation.pop(); //pop 2(2 case
+      this.displayStr.pop();
+      this.currNumber = this.awaitValue.pop()||'';
+    }else if(deleted) this.displayStr.push(deleted);
+  }
 
   Backspace(){
     const deletedChar = this.resultEl.innerText.slice(-1);
     if(!deletedChar) return;
 
     if(this.operationValue.includes(deletedChar)){
-      this.displayStr.pop(); //pop operator
-      const deleted = this.displayStr.pop(); //pop number
-      if(deleted===''){
-          this.awaitOperation.pop(); //pop 2(2 case
-          this.displayStr.pop(); 
-        }
+      const deletedOp = this.displayStr.pop(); //pop operator
 
       if(deletedChar===')') this.ReconstructAwaitOp();
       else{
-        if(this.awaitOperation.length>0) this.awaitOperation.pop();
-
         this.has_dot = String(this.currNumber).includes('.'); 
-      }
-      this.currNumber = this.awaitValue.pop()||''; // when hit ')', currNumber is pushed into awaitvalue
+
+        if(this.awaitOperation.length>0) this.awaitOperation.pop();
+  
+        //avoid previous char is ')' and pull number from stack
+        if(this.displayStr[this.displayStr.length-1] !== ')') {
+          const deleted = this.displayStr.pop();
+          
+          if(deletedOp==='(') this.DeleteParenteses_open(deleted);
+          else this.currNumber = this.awaitValue.pop()||''; //standart deletion
+        }
+      }// when hit ')', currNumber is pushed into awaitvalue
     }else{
       //update current number
       this.currNumber = String(this.currNumber).slice(0,-1);
@@ -297,9 +314,10 @@ class CALCULATOR{
 
       if(this.currNumber!=='') this.displayStr.push(this.currNumber);
     } 
+
     this.resultEl.innerText = this.resultEl.innerText.slice(0,-1);
 
-    const prevChar = this.resultEl.innerText.slice(-1)??'';
+    const prevChar = this.resultEl.innerText.slice(-1)||'';
     this.prevKey.value = prevChar;
     this.prevKey.type = prevChar ? (this.operationValue.includes(prevChar) ? 'operator':'') : '';
 
