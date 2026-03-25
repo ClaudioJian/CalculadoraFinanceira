@@ -20,7 +20,7 @@ body {
   margin-top: 100px;
 }
 
-.selector {
+.selector{
   background-color: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
@@ -35,47 +35,30 @@ body {
 }
 
 .s1 {
-  background-color:rgb(255, 255, 255);
+  border-style: 15px rgb(169, 22, 22) solid 100%;
+  background-color:transparent;
   left:10%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s2 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:30%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s3 {
   border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:50%;
   /*eu esqueci como muda as bordas*/
 }
 
 .s4 {
   border-style: 500px rgb(169, 22, 22) solid 100%;
-  background-color:rgb(255, 255, 255);
+  background-color:transparent;
   left:70%;
-  /*eu esqueci como muda as bordas*/
-}
-
-.s2 {
-  border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
-  /*eu esqueci como muda as bordas*/
-}
-
-.s3 {
-  border-style: 15px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
-  /*eu esqueci como muda as bordas*/
-}
-
-.s4 {
-  border-style: 500px rgb(169, 22, 22) solid 100%;
-  background-color:rgba(25, 205, 91, 0.578);
   /*eu esqueci como muda as bordas*/
 }
 
@@ -83,12 +66,20 @@ body {
 .css-container-itens{
   position: absolute;
   top:100%;
+  z-index: 300;
+}
+
+/*todo itens do selector*/
+.selector-container ul{
+  list-style-type: none;
+  padding: 0%;
+  margin: 0%;
 }
 
 /*modifica visualização do elemento nos itens quando mouse está em cima
 vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .selecting-itens{
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(55, 62, 119);
   cursor: pointer;
   color:white;
 }
@@ -219,40 +210,45 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
   background-color: rgba(255, 255, 255, 0.76);
 }
 
-.resizer.js-left,
-.resizer.js-right{
+div[data-direction="n"]{top:-5px;}
+div[data-direction="s"]{bottom:-5px;}
+div[data-direction="w"]{left:-5px;}
+div[data-direction="e"]{right:-5px;}
+div[data-direction="nw"] { top: -5px; left: -5px; }
+div[data-direction="ne"] { top: -5px; right: -5px; }
+div[data-direction="ws"] { bottom: -5px; left: -5px; }
+div[data-direction="se"] { bottom: -5px; right: -5px; }
+
+div[data-direction="e"],
+div[data-direction="w"]{
   cursor:ew-resize;
   width: 7px;
   height: 100%;
 }
 
-.resizer.js-top,
-.resizer.js-bottom{
+div[data-direction="n"],
+div[data-direction="s"]{
   cursor:ns-resize;
   width: 100%;
   height: 7px;
 }
 
-.resizer.js-left.js-top,
-.resizer.js-right.js-bottom
+div[data-direction="ne"],
+div[data-direction="ws"]
 {
-  cursor: nwse-resize;
+  cursor: nesw-resize;
   width: 7px;
   height: 7px;
 }
 
-.resizer.js-right.js-top,
-.resizer.js-left.js-bottom{
-  cursor: nesw-resize;
+div[data-direction="nw"],
+div[data-direction="se"]{
+  cursor: nwse-resize;
   width: 7px;
   height: 7px;
   background-color: transparent;
 }
 
-.resizer.js-top{top:-5px;}
-.resizer.js-bottom{bottom:-5px;}
-.resizer.js-left{left:-5px;}
-.resizer.js-right{right:-5px;}
 
 /*-------------------draggable-------------------------*/
 .draggable{
@@ -260,6 +256,41 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
   border: 2px solid black;
   height:60px;
   user-select: none;
+}
+
+/*-------------------calculator-------------------------*/
+
+.css-img-calculator{
+  left:100px;
+}
+
+.btn-open-calculator-out{
+  height: 60px;
+}
+
+.btn-open-calculator-inside{
+  height: 60px;
+  right: 0;
+  top:-60px;
+  position: absolute;
+}
+
+.calculator-container{
+  position: absolute;
+  z-index: 3000;
+  width: 300px;
+  height: 200px;
+  background-color: rgb(0, 110, 255);
+
+  display: flex;
+  flex-direction: column; 
+}
+
+.calculator-result-container{
+  width: 100%;
+  height: 30px;
+  border: 2px black solid;
+  background-color: blanchedalmond;
 }
 
 /* ------------------JS utilidade ----------------------*/
@@ -272,30 +303,6 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 
 
 
-
-.css-img-calculator{
-  left:100px;
-}
-
-.btn-calculator-out{
-  height: 60px;
-}
-
-.btn-calculator-inside{
-  height: 60px;
-  right: 0;
-  top:-60px;
-  position: absolute;
-}
-
-.calculator-container{
-  position: absolute;
-  z-index: 3000;
-  width: 300px;
-  height: 200px;
-  background-color: aqua;
-}
-
 /* ------------------imagem temporária ----------------------*/
 img[src="image/img_placeholder.jpg"]{
   width: 50px;
@@ -305,5 +312,4 @@ img[src="image/img_placeholder.jpg"]{
   border: 5px;
   border-color: black;
   border-style:solid;
-}
 }

@@ -1,0 +1,143 @@
+{
+    "0":{
+        "container_class":"selector-container",
+        "class":"s1",
+        "filterID":"0",
+        "depencityID":"",
+        "default_selected":{
+            "class":"investimento",
+            "type":"investimento",
+            "depencitytype":"",
+            "order":"0",
+            "innerElements":"investimento"
+            },
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"imposto",
+            "type":"imposto",
+            "depencitytype":"",
+            "order":"1",
+            "innerElements":"Imposto"
+            }]
+    },
+
+    "1":{
+        "container_class":"selector-container",
+        "class":"s2",
+        "filterID":"1",
+        "depencityID":"0",
+        "default_selected":"",
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"",
+            "type":"all",
+            "depencitytype":"",
+            "order":"0",
+            "innerElements":"ALL"
+            },
+            {
+            "class":"investimento_B",
+            "type":"investimento_B",
+            "depencitytype":"investimento",
+            "order":"1",
+            "innerElements":"investimento tipo B-need investimento"
+            },
+            {
+            "class":"investimento_C",
+            "type":"investimento_C",
+            "depencitytype":"investimento",
+            "order":"2",
+            "innerElements":"investimento tipo C-need investimento"
+            },
+            {
+            "class":"imposto_A",
+            "type":"imposto_A",
+            "depencitytype":"imposto",
+            "order":"3",
+            "innerElements":"Imposto tipo A-need imposto"
+            },
+            {
+            "class":"imposto_B",
+            "type":"imposto_B",
+            "depencitytype":"imposto",
+            "order":"4",
+            "innerElements":"Imposto tipo B-need imposto"
+            }
+        ]
+    },
+
+    "2":{
+        "container_class":"selector-container",
+        "class":"s3",
+        "filterID":"",
+        "depencityID":"1",
+        "default_selected":"",
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"imposto_F",
+            "type":"",
+            "depencitytype":"imposto_B",
+            "order":"0",
+            "innerElements":"imposto tipo F-need imposto tipoB"
+            },
+            {
+            "class":"imposto_G",
+            "type":"",
+            "depencitytype":"imposto_A",
+            "order":"1",
+            "innerElements":"imposto tipo G-need imposto tipoA"
+            },
+            {
+            "class":"investimento_H",
+            "type":"",
+            "depencitytype":"investimento_C",
+            "order":"2",
+            "innerElements":"investimento tipo C-need investimento tipoC"
+            },
+            {
+            "class":"investimento_I",
+            "type":"",
+            "depencitytype":"investimento_B",
+            "order":"3",
+            "innerElements":"investimento tipo I-need investimento tipoB"
+            },
+            {
+            "class":"investimento_J",
+            "type":"",
+            "depencitytype":"investimento_C",
+            "order":"4",
+            "innerElements":"investimento tipo J-need investimento tipoC"
+            }
+        ]
+    },
+
+    "3":{
+        "container_class":"selector-container",
+        "class":"s4",
+        "filterID":"",
+        "depencityID":"",
+        "default_selected":{
+            "class":"gráfico g1",
+            "type":"",
+            "depencitytype":"",
+            "order":"0",
+            "innerElements":"Test0"
+            },
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"1",
+            "innerElements":"Test1"
+            },
+            {
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"2",
+            "innerElements":"Test2"
+            }
+        ]
+    }
+}
