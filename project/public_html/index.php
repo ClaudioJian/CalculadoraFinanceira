@@ -1,3 +1,32 @@
+<?php 
+//security
+  session_start();
+  
+  //only allow user enter by index.php
+  define('is_allowed',true);
+  define('private_path', __DIR__ .'/../private');
+
+  if(!defined('private_path')){
+    http_response_code(403);
+    //die = exit
+    die('path not finded');
+  }
+
+  //copy and paste for functions
+  //current features(work in progress): create selector and calculator
+  require_once private_path . '\processor\createCustomElement.php';
+
+
+
+
+
+
+//----------------------------------------------main logic------------------------------------------------------------------------
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -7,11 +36,6 @@
     <link rel="stylesheet" href="esqueleto.css"/>
   </head>
   <body>
-      <?php 
-        //copy and paste for functions
-        //current features(work in progress): create selector and calculator
-        include './processor/createCustomElement.php';
-       ?>
 
       <main>
         <!--menu-->

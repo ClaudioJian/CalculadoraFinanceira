@@ -1,4 +1,11 @@
 <?php
+    //security
+    if(!defined('is_allowed')){
+        http_response_code(403);
+        die('Direct access to this script is forbidden.');
+    }
+
+    //----------------------------------------------main logic------------------------------------------------------------------------
     function create_children($innerElements,$new_tags=[]){
         //this is just text
         if(!is_array($innerElements)) {echo $innerElements;return;}
@@ -234,7 +241,7 @@
         elseif(!is_int($quant)) echo "second argument for create_custom_element() must be int: {$quant}";
         else{
             $element_selected = strtolower($element_selected);
-            $file_path = "./data/{$element_selected}.json";
+            $file_path = private_path . "\\data\\{$element_selected}.json";
             if(!file_exists($file_path)){
                 echo 'path not find! path:'.$file_path;
                 return;
