@@ -1,0 +1,5 @@
+"Perdão professor, mas o nosso projeto inicialmente não tem uma página de php que leva a outra, o objetivo do
+nosso trabalho é entregar todas as opções logo na página principal, infelizmente ela ainda está incompleta,
+pois estamos tentando implementar o php com o javascript e ainda terá um sistema de gráficos. 
+
+Cordialmente, Gabriel e Claudio"
