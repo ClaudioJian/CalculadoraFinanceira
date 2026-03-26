@@ -237,11 +237,16 @@
     
 
     function create_custom_element($element_selected,$quant){
+        //track for each element how many is created and to add attributte pre-written in data folder
+        //key is name and value is how much created
+        static $element_list = ['selector'=>0, 'calculator'=>0];
+
         if(empty($element_selected)) return;
         elseif(!is_int($quant)) echo "second argument for create_custom_element() must be int: {$quant}";
         else{
             $element_selected = strtolower($element_selected);
             $file_path = PRIVATE_PATH . "data/{$element_selected}.json";
+
             if(!file_exists($file_path)){
                 echo 'path not find! path:'.$file_path;
                 return;
@@ -251,8 +256,6 @@
             $data = json_decode(file_get_contents($file_path),true);
             //prevent data not find
             if($data){
-                //uptade what data to get
-                global $element_list;
                 //get which element started
                 $start_idx = $element_list[$element_selected];
                 switch($element_selected){
@@ -271,8 +274,6 @@
         }
     }
     
-    //track for each element how many is created and to add attributte pre-written in data folder
-    //key is name and value is how much created
-    $element_list = ['selector'=>0, 'calculator'=>0];
     
+
 ?>
