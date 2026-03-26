@@ -1,6 +1,6 @@
 this file is to explain JSON format for developers
 
-all json must name as same as create create_custom_element()'s first argument and second must be int
+all json must name as same as create create_custom_element()'s first argument(also must be lowercase) and second must be int
 selector.JSON:
     - "class": can hold multiple class, separete with space to indentify. put "none" or "" if don't exist
     - "filterID": indentifier to tell other selector, hide some of content depedent of itself. if no other selector is depedent to this selector, put "none" or ""
