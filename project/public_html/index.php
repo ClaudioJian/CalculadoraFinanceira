@@ -69,7 +69,7 @@
 
         <!--calculator-->
         <?php
-          elements\render('calculator',1);
+          elements\CUSTOM_ELEMENT::render('calculator',1);
         ?>
 
         
@@ -86,7 +86,7 @@
 
         <!--selector-->
         <?php
-          elements\render('selector',3);
+          elements\CUSTOM_ELEMENT::render('selector',3);
         ?>
 
         <div class="insert">
@@ -96,7 +96,7 @@
         <!--selector-->
         <?php
           //loadQuant tell how many element you want to load from there, data for element must placed in order
-          elements\render('selector',1);
+          elements\CUSTOM_ELEMENT::render('selector',1);
         ?>
 
 
