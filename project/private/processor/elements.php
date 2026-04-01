@@ -1,11 +1,36 @@
 <?php
+    namespace processor\elements;
     //security
     if(!defined('IS_ALLOWED')){
         http_response_code(403);
         exit('Direct access to this script is forbidden.');
     }
 
+    require_once PRIVATE_PATH . '/processor/classes.php';
+    use processor\classes\CALCULATOR;
+    use processor\classes\SELECTOR;
+
     //----------------------------------------------main logic------------------------------------------------------------------------
+    
+
+    function render($element_selected,$quant){
+        static $object_list = ['selector'=>null, 'calculator'=>null];
+
+        $object_list['selector']??= new SELECTOR();
+        $object_list['calculator']??= new CALCULATOR();
+
+        switch($element_selected){
+            case 'calculator':
+                $object_list['calculator']->render($element_selected,$quant);
+                break;
+            case 'selector':
+                $object_list['selector']->render($element_selected,$quant);
+                break;
+        }
+    }
+
+
+/*
     function create_children($innerElements,$new_tags=[]){
         //this is just text
         if(!is_array($innerElements)) {echo $innerElements;return;}
@@ -56,14 +81,7 @@
         }
     }
 
-    function key_empty($key,$tag_to_add = null){
-        $key = strtolower($key);
-        if($key===''||$key==null||$key=='none') return '';
-        else {
-            if($tag_to_add) $key = ' ' . $tag_to_add . '="' . $key . '" ';
-            return $key;
-            }
-    }
+    
 
     function create_item($item_selected){
         // if item not specificted or not find, create blank div
@@ -236,13 +254,13 @@
 
     
 
-    function create_custom_element($element_selected,$quant){
+    function render($element_selected,$quant){
         //track for each element how many is created and to add attributte pre-written in data folder
         //key is name and value is how much created
         static $element_list = ['selector'=>0, 'calculator'=>0];
 
         if(empty($element_selected)) return;
-        elseif(!is_int($quant)) echo "second argument for create_custom_element() must be int: {$quant}";
+        elseif(!is_int($quant)) echo "second argument for".__METHOD__."must be int: {$quant}";
         else{
             $element_selected = strtolower($element_selected);
             $file_path = PRIVATE_PATH . "data/{$element_selected}.json";
@@ -273,7 +291,5 @@
             }
         }
     }
-    
-    
-
+*/
 ?>

@@ -2,6 +2,7 @@
 //security
 
   //insert this code to other file if you want user to acess directly by typing folder name. like localhost/public/html/index.php
+
   $init_file = __DIR__ .'/../private/' . 'init.php';
 
   if(!is_file($init_file)){
@@ -20,7 +21,9 @@
 
   //copy and paste for functions
   //current features(work in progress): create selector and calculator
-  require_once PRIVATE_PATH . '/processor/createCustomElement.php';
+  require_once PRIVATE_PATH . '/processor/elements.php';
+  //change to use processor\elements as anyname if you think it is too long to write elements
+  use processor\elements;
 
 
 
@@ -66,7 +69,7 @@
 
         <!--calculator-->
         <?php
-          create_custom_element('calculator',1);
+          elements\render('calculator',1);
         ?>
 
         
@@ -83,7 +86,7 @@
 
         <!--selector-->
         <?php
-          create_custom_element('selector',3);
+          elements\render('selector',3);
         ?>
 
         <div class="insert">
@@ -93,7 +96,7 @@
         <!--selector-->
         <?php
           //loadQuant tell how many element you want to load from there, data for element must placed in order
-          create_custom_element('selector',1);
+          elements\render('selector',1);
         ?>
 
 

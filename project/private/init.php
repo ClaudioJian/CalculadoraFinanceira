@@ -4,8 +4,10 @@
     session_start();
     }
 
-  define('PRIVATE_PATH', __DIR__ .'/../private/');
-  define('DOCUMENT_ROOT',__DIR__);
+  $top_dir = realpath(__DIR__.'/../'); //project
+
+  define('PRIVATE_PATH', $top_dir .'/private/');
+  define('DOCUMENT_ROOT', $top_dir .'/pubic_html/');
   //const for entry point, avoinding user enter directly
   define('IS_ALLOWED',true);
 
