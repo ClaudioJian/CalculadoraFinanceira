@@ -21,7 +21,8 @@
 
   //copy and paste for functions
   //current features(work in progress): create selector and calculator
-  require_once PRIVATE_PATH . '/processor/elements.php';
+  require_once PRIVATE_PATH . '/processor/CustomElements/allElements.php';
+
   //change to use processor\elements as anyname if you think it is too long to write elements
   use processor\elements;
 
