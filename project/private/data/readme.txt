@@ -1,5 +1,16 @@
 this file is to explain JSON format for developers
 
+
+CUSTOM_ELEMENT::render():
+need at least 2 argument passed in
+first argument is always what type of element you want like 'selector'(case insensitive)
+if 2 argument, Starts from the last saved position and creates for n times indicated in second argument items.
+if 3 argument, will throw error. you must use fourth flag
+if 4 argument, you can use second as str or int as start position, if flag are set to 
+        INDEX_START or 1: start with index provided by user and create n times indicated in third argument, example: "I want to show 3 styles starting specifically from 'index x/name'."
+        INDEX_RESET or 3: It forces the index to 0 (which usually maps to your "default" key in JSON) and counts up from there.
+        INDEX_STATIC or 4: Picks one specific style and stays there, then clones it for the remainder n times indicated in third argument, all copy will look same
+
 all json must name as same as create create_custom_element()'s first argument(also must be lowercase) and second must be int
 selector.JSON:
     - "class": can hold multiple class, separete with space to indentify. put "none" or "" if don't exist
