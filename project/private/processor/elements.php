@@ -182,13 +182,17 @@
                     $q = $quant;
                     $i = $index;
                 }
+
+                $q = (int)($q??1);
+                $m = $m ?? self::INDEX_CONTINUE;
+                $i = $i??$index;
                 
-                self::$quant = (int)($q??1);
-                self::$current_idx = $i??$index;
-                self::$mode = $m ?? self::INDEX_CONTINUE;
+                self::$quant = $q;
+                self::$current_idx = $i;
+                self::$mode = $m;
 
                 //validation
-                if(!is_int($q)||$q<0) throw new \Exception("quantity must be a positive integer not 0");
+                if(!is_int($q)||$q<0) throw new \Exception("quantity must be a positive integer not 0: {$q}");
                 if(is_int($i)&&$i<0) throw new \Exception("index must be a positive integer othrwise need be string");
                 if($flag && !in_array($flag,self::$allowed_flags)) throw new \Exception("flag is invalid, allowed flag: ". implode(" | ", self::$allowed_flags));
                 if(($m === self::INDEX_STATIC || $m === self::INDEX_START) && $i === null) throw new \Exception("index must be provided when use INDEX_STATIC or INDEX_START flag");

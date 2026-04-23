@@ -1,15 +1,18 @@
 this file is to explain JSON format for developers
 
 
-CUSTOM_ELEMENT::render():
-need at least 2 argument passed in
+CUSTOM_ELEMENT::render(type:str,optional quant int|str, optional index: int|str, optional flag:int):
+
 first argument is always what type of element you want like 'selector'(case insensitive)
-if 2 argument, Starts from the last saved position and creates for n times indicated in second argument items.
-if 3 argument, will throw error. you must use fourth flag
-if 4 argument, you can use second as str or int as start position, if flag are set to 
-        INDEX_START or 1: start with index provided by user and create n times indicated in third argument, example: "I want to show 3 styles starting specifically from 'index x/name'."
-        INDEX_RESET or 3: It forces the index to 0 (which usually maps to your "default" key in JSON) and counts up from there.
-        INDEX_STATIC or 4: Picks one specific style and stays there, then clones it for the remainder n times indicated in third argument, all copy will look same
+quant is quantity you want create, change behaviour depedent of flag. If this is a string, index cannot be string and will become quant. 
+if no flags passed, by default it will start from index previous, create element by [quant] times and store index. if no [quant] passed, become 1 automatically.
+index is where to start, change behaviour depedent of flag. If index is indicated, flag will be by default INDEX_START.
+
+flags:
+INDEX_START or 1: start with index provided by user and create n times indicated in quant, example: "I want to show 3 styles starting specifically from 'index x/name'."
+INDEX_STATIC or 3: Picks one specific style and stays there, then clones it for the remainder n times indicated in third argument, all copy will look same
+
+
 
 all json must name as same as create create_custom_element()'s first argument(also must be lowercase) and second must be int
 selector.JSON:

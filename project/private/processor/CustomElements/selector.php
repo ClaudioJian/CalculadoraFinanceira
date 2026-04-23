@@ -67,8 +67,8 @@
         }
 
         public function create($current_idx){
-                //container
-                echo '<section class="'. $this->target['container_class'] .' '.$this->class.'">';
+                //container <section class="container-class additonal-class" id="">
+                echo '<section class="' . $this->target['container_class'] . ' ' .$this->class.'" id="' .self::$map[$current_idx] .'">';
                     $default_selected = $this->target["default_selected"]??'';
 
                     echo '<button class="selector" data-action="open-selector" data-type="extendable"'.$this->filterID.'">';

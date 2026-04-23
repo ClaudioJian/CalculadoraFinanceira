@@ -70,7 +70,7 @@
 
         <!--calculator-->
         <?php
-          elements\CUSTOM_ELEMENT::render('calculator',1);
+          elements\CUSTOM_ELEMENT::render('calculator');
         ?>
 
         
@@ -97,7 +97,7 @@
         <!--selector-->
         <?php
           //loadQuant tell how many element you want to load from there, data for element must placed in order
-          elements\CUSTOM_ELEMENT::render('selector',1);
+          elements\CUSTOM_ELEMENT::render('selector');
         ?>
 
 
