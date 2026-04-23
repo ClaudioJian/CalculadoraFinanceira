@@ -146,26 +146,29 @@ vvvvv ajuste background-color para visualizar efeito vvvvv*/
 .i1 {
   position:absolute;
   left:10%;
+  top:11%;
 }
 
 .i2 {
   position:absolute;
   left:30%;
+  top:11%;
 }
 
 .i3 {
   position:absolute;
   left:50%;
+  top:9%;
 }
 
 .i4 {
   position:absolute;
   left:70%;
+  top:11%
 }
 
 .i5 {
   position:absolute;
-  left:10%;
   top:40%;
   left:65%;
 }
