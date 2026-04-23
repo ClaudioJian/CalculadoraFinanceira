@@ -37,31 +37,94 @@
             },
             {
             "class":"investimento_B",
-            "type":"investimento_B",
+            "type":"cdi",
             "depencitytype":"investimento",
             "order":"1",
-            "innerElements":"investimento tipo B-need investimento"
+            "innerElements":"CDI"
             },
             {
             "class":"investimento_C",
-            "type":"investimento_C",
+            "type":"cdb",
             "depencitytype":"investimento",
             "order":"2",
-            "innerElements":"investimento tipo C-need investimento"
+            "innerElements":"CDB"
+            },
+            {
+            "class":"investimento_D",
+            "type":"tesouro_direto",
+            "depencitytype":"investimento",
+            "order":"3",
+            "innerElements":"Tesouro Direto"
+            },
+            {
+            "class":"investimento_E",
+            "type":"acoes",
+            "depencitytype":"investimento",
+            "order":"4",
+            "innerElements":"Ações"
+            },
+            {
+            "class":"investimento_F",
+            "type":"fiis",
+            "depencitytype":"investimento",
+            "order":"5",
+            "innerElements":"Fundo Imobiliários(FIIs)"
+            },
+            {
+            "class":"investimento_G",
+            "type":"poupança",
+            "depencitytype":"investimento",
+            "order":"6",
+            "innerElements":"Poupança"
             },
             {
             "class":"imposto_A",
-            "type":"imposto_A",
+            "type":"ir",
             "depencitytype":"imposto",
-            "order":"3",
-            "innerElements":"Imposto tipo A-need imposto"
+            "order":"7",
+            "innerElements":"Imposto de Renda(IR)"
             },
             {
             "class":"imposto_B",
-            "type":"imposto_B",
+            "type":"iof",
             "depencitytype":"imposto",
-            "order":"4",
-            "innerElements":"Imposto tipo B-need imposto"
+            "order":"8",
+            "innerElements":"Imposto sobre operações financeiras (IOF)"
+            },
+            {
+            "class":"imposto_C",
+            "type":"come_cotas",
+            "depencitytype":"imposto",
+            "order":"9",
+            "innerElements":"Come cotas(fundos de investimentos)"
+            },
+            {
+            "class":"imposto_D",
+            "type":"imposto_servico",
+            "depencitytype":"imposto",
+            "order":"9",
+            "innerElements":"Imposto sobre serviço(ISS)"
+            },
+            {
+            "class":"imposto_E",
+            "type":"pis_cofins",
+            "depencitytype":"imposto",
+            "order":"10",
+            "innerElements":"PIS/COFINS"
+            },
+            {
+            "class":"imposto_F",
+            "type":"cdfm",
+            "depencitytype":"imposto",
+            "order":"11",
+            "innerElements":"CDFM(histórico/referência)"
+            },
+            {
+            "class":"imposto_G",
+            "type":"taxa_custodia",
+            "depencitytype":"imposto",
+            "order":"12",
+            "innerElements":"Taxa de Custódia/Operacionais"
             }
         ]
     },
@@ -121,7 +184,7 @@
             "type":"",
             "depencitytype":"",
             "order":"0",
-            "innerElements":"Test0"
+            "innerElements":"1 Mês"
             },
         "item_class":"css-container-itens",
         "itens":[{
@@ -129,14 +192,49 @@
             "type":"",
             "depencitytype":"",
             "order":"1",
-            "innerElements":"Test1"
+            "innerElements":"3 Meses"
             },
             {
             "class":"gráfico g2",
             "type":"",
             "depencitytype":"",
             "order":"2",
-            "innerElements":"Test2"
+            "innerElements":"6 meses"
+            },
+            {
+            "class":"gráfico g3",
+            "type":"",
+            "depencitytype":"",
+            "order":"3",
+            "innerElements":"1 Ano"
+            },
+            {
+            "class":"gráfico g4",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":"1 Ano"
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":"3 Anos"
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":"5 Anos"
+            },
+            {
+            "class":"gráfico g6",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":"10 Anos"
             }
         ]
     }
