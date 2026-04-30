@@ -10,6 +10,7 @@ body {
   height: 100vh;
   overflow: hidden; 
   position: relative;
+  overflow-y: scroll;
 }
 
 /* ------------------selector css ----------------------*/
@@ -299,6 +300,14 @@ div[data-direction="se"]{
   height: 0;
   opacity: 0%;
   visibility: hidden;
+}
+
+.server_error{
+  position: absolute;
+  background-color: rgb(126, 27, 27);
+  color: white;
+  z-index: 9999;
+  overflow-y: scroll;
 }
 
 
