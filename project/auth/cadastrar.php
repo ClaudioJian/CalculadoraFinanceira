@@ -15,11 +15,9 @@ $email = $_POST['email']??'';
 //verifa se já é logado, se não verifica se o input pode ser encontrado no database
 $logged = is_logged();
 
-//dummy
-$response = NULL; 
 
 //se não está logado e todos valores não são nulos
-if(!$logged && ($email==='' && $password==='' && $name==='')) {
+if(!$logged && !($email==='' && $password==='' && $name==='')) {
     $conn = connect_database();
 
     // connection error
@@ -51,7 +49,7 @@ if(!$logged && ($email==='' && $password==='' && $name==='')) {
 
 <?php 
 //se não está logado e todos valores são nulos
-if(!$logged && !($email==='' && $password==='' && $name==='')){ ?>
+if(!$logged && ($email==='' && $password==='' && $name==='')){ ?>
     <!--informa se o usuário não está logado-->
     <header>
         <p> Cadastrar-se:</p>

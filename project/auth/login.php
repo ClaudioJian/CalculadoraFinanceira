@@ -16,10 +16,11 @@ $email = $_POST['email']??'';
 $logged = is_logged();
 
 
+
 //dummy
 $response = NULL; 
 
-if(!$logged) {
+if(!$logged && !($email==='' && $password==='' && $name==='')) {
     $conn = connect_database();
 
     // connection error
