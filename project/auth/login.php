@@ -53,7 +53,7 @@ if(!$logged) {
     <!--informa se o usuário está logado-->
     <header>
         <?php //segunda vez de entrar essa página e está logado(não tem nenhum data postado)
-        if(!($email && $name && $password)) {?>
+        if($email==='' && $name==='' && $password==='') {?>
             <p> Você já está logado como:</p>
         <?php }else{ ?>
             <p> Você está logado como:
@@ -69,12 +69,14 @@ if(!$logged) {
         <!--motivo-->
         <?php 
             // not found por nome
-            if(is_int($response) && !($name && $password && $email)) echo "<p>". $name ." não foi registrado</p>";
-            //nome encontrado mas inputs errado
-            else {
-                //false se o senha errado
-                if(!$response['password']) echo "<p>Senha incorreto</p>";
-                if(!$response['email']) echo "<p>Email incorreto</p>";
+            if($response !== NULL && !($email==='' && $password==='' && $name==='')){
+                if(is_int($response)) echo "<p>". $name ." não foi registrado</p>";
+                //nome encontrado mas inputs errado
+                else {
+                    //false se o senha errado
+                    if($response['password']){ echo "<p>Senha incorreto</p>";}
+                    if($response['email']) {echo "<p>Email incorreto</p>";}
+                }
             }
         ?>
     </header>

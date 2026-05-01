@@ -19,7 +19,7 @@ $logged = is_logged();
 $response = NULL; 
 
 //se não está logado e todos valores não são nulos
-if(!$logged && ($name && $email && $password)) {
+if(!$logged && ($email==='' && $password==='' && $name==='')) {
     $conn = connect_database();
 
     // connection error
@@ -51,7 +51,7 @@ if(!$logged && ($name && $email && $password)) {
 
 <?php 
 //se não está logado e todos valores são nulos
-if(!$logged && !($name && $email && $password)){ ?>
+if(!$logged && !($email==='' && $password==='' && $name==='')){ ?>
     <!--informa se o usuário não está logado-->
     <header>
         <p> Cadastrar-se:</p>
@@ -68,7 +68,7 @@ if(!$logged && !($name && $email && $password)){ ?>
     <a href="login.php">login</a>
 <?php }
 // se é logado e o valor é nulo, significa que vem de outro página
-else if($logged && !($name && $email && $password)){ ?>
+else if($logged && !($email==='' && $password==='' && $name==='')){ ?>
     <!--informa se o usuário está logado-->
     <header>
         <p> Você já está logado como:</p>
