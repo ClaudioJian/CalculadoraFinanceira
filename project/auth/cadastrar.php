@@ -25,8 +25,15 @@ if(!$logged && ($name && $email && $password)) {
     // connection error
     if(is_int($conn) && $conn<0) ERR_conn_db();
 
-    if(register_user($name,$password,$email,$conn)<0) ERR_regitration();
-    $logged = true;
+    if(register_user($name,$password,$email,$conn)===0) {
+        $logged = false;
+        ERR_regitration($_POST);
+    }
+    else {
+        $logged = true;
+        $_SESSION['user'] = $name; 
+        $_SESSION['email'] = $email;
+    }
 }
 
 ?>

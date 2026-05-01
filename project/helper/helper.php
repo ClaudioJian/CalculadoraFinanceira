@@ -1,7 +1,7 @@
 <?php 
 require_once "const.php";
-require_once "connection_error.php";
-require_once "cannot_register_user.php";
+require_once "ERROR_html.php";
+
 
 /**
  * check if user logged

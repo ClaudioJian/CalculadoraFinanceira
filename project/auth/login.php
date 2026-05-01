@@ -15,6 +15,7 @@ $email = $_POST['email']??'';
 //verifa se já é logado, se não verifica se o input pode ser encontrado no database
 $logged = is_logged();
 
+
 //dummy
 $response = NULL; 
 
@@ -22,11 +23,16 @@ if(!$logged) {
     $conn = connect_database();
 
     // connection error
-    if(is_int($conn) && $conn<0) exit; 
+    if(is_int($conn) && $conn<0) ERR_conn_db(); 
 
     $response = user_can_login($name,$password,$email,$conn);
     // verifica se é logado, int significa que ele não encontrou nenhum usuário
     $logged = is_int($response) ? false : $response['sucess'];
+
+    if($logged) {
+        $_SESSION['user'] = $name; 
+        $_SESSION['email'] = $email;
+    }
 }
 
 ?>
@@ -43,17 +49,18 @@ if(!$logged) {
 
   <body>
 
-<?php if($logged){
-    // marcar esse usuário como logado
-    $_SESSION['user'] = $name;
-     ?>
-//retornar html para browser
+<?php if($logged){?>
     <!--informa se o usuário está logado-->
     <header>
-        <p> Você já está logado como:</p>
-        <!--quem?-->
-        <h1><?= htmlspecialchars($name) ?></h1>
-        <h2><?= htmlspecialchars($email) ?></h2>
+        <?php //segunda vez de entrar essa página e está logado(não tem nenhum data postado)
+        if(!($email && $name && $password)) {?>
+            <p> Você já está logado como:</p>
+        <?php }else{ ?>
+            <p> Você está logado como:
+        <?php } ?>
+        <!--informação do login?-->
+        <h1><?= htmlspecialchars($_SESSION['user']) ?></h1>
+        <h2><?= htmlspecialchars($_SESSION['email']) ?></h2>
     </header>
 <?php }else{ ?>
     <!--informa se o usuário não está logado-->
@@ -62,7 +69,7 @@ if(!$logged) {
         <!--motivo-->
         <?php 
             // not found por nome
-            if(is_int($response)) echo "<p>". $name ." não foi registrado</p>";
+            if(is_int($response) && !($name && $password && $email)) echo "<p>". $name ." não foi registrado</p>";
             //nome encontrado mas inputs errado
             else {
                 //false se o senha errado
