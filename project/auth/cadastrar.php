@@ -1,5 +1,5 @@
 <?php
-require_once "../helper/helper.php";
+require_once "../helper/AUTH_main.php";
 
 session_start();
 
@@ -21,16 +21,25 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
     $conn = connect_database();
 
     // connection error
-    if(is_int($conn) && $conn<0) ERR_conn_db();
+    if(is_array($conn) && $conn['sucess']===DB_ERR_CONNECTION) ERR_conn_db();
 
-    if(register_user($name,$password,$email,$conn)===0) {
-        $logged = false;
-        ERR_regitration($_POST);
+    $response = register_user($name,$password,$email,$conn);
+
+    $state = $response['sucess'];
+
+    if($state<=0){
+        if($state===USER_ALREDY_EXIST) {
+                $logged = false;
+                ERR_user_alredy_exist($_POST);
+        }else if($state===DB_ERR_INSERT){
+            //error html
+            $logged = false;
+            ERR_registration($_POST);
+        }
     }
-    else {
+    else{
         $logged = true;
-        $_SESSION['user'] = $name; 
-        $_SESSION['email'] = $email;
+        log_in($response['result']);
     }
 }
 
@@ -63,23 +72,32 @@ if(!$logged && ($email==='' && $password==='' && $name==='')){ ?>
         </form>
     </main>
 
-    <a href="login.php">login</a>
+    <footer>
+        <a href="login.php">login</a>
 <?php }
 // se é logado e o valor é nulo, significa que vem de outro página
-else if($logged && !($email==='' && $password==='' && $name==='')){ ?>
+else{
+    if($logged && ($email==='' && $password==='' && $name==='')){?>
     <!--informa se o usuário está logado-->
     <header>
         <p> Você já está logado como:</p>
         <!--quem?-->
         <h1><?= htmlspecialchars($name) ?></h1>
         <h2><?= htmlspecialchars($email) ?></h2>
+
     </header>
-<?php }else{ ?>
+    <?php }else{ ?>
     <header>
         <p> Cadastrado com sucesso!</p>
     </header>
 <?php } ?>
-    <a href="../index.html">voltar</a>
+    <footer>
+        <!--deslogar-->
+        <a href="deslogin.php">deslogin</a>
+        
+<?php } ?>  
+        <a href="../index.html">voltar</a>
+    </footer>
   </body>
   <script src="auth.js"></script>
 </html>

@@ -1,5 +1,5 @@
 <?php
-require_once "../helper/helper.php";
+require_once "../helper/AUTH_main.php";
 
 session_start();
 
@@ -16,7 +16,6 @@ $email = $_POST['email']??'';
 $logged = is_logged();
 
 
-
 //dummy
 $response = NULL; 
 
@@ -24,15 +23,16 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
     $conn = connect_database();
 
     // connection error
-    if(is_int($conn) && $conn<0) ERR_conn_db(); 
+    if(is_array($conn) && $conn['sucess']===DB_ERR_CONNECTION) ERR_conn_db();
 
     $response = user_can_login($name,$password,$email,$conn);
+    
     // verifica se é logado, int significa que ele não encontrou nenhum usuário
-    $logged = is_int($response) ? false : $response['sucess'];
+    $logged = $response['sucess'] <= 0 ? false : true;
 
     if($logged) {
-        $_SESSION['user'] = $name; 
-        $_SESSION['email'] = $email;
+        $record = $response['result'];
+        log_in($record);
     }
 }
 
@@ -62,7 +62,12 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
         <!--informação do login?-->
         <h1><?= htmlspecialchars($_SESSION['user']) ?></h1>
         <h2><?= htmlspecialchars($_SESSION['email']) ?></h2>
+
     </header>
+
+    <footer>
+        <!--deslogar-->
+        <a href="deslogin.php">deslogin</a>
 <?php }else{ ?>
     <!--informa se o usuário não está logado-->
     <header>
@@ -71,7 +76,7 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
         <?php 
             // not found por nome
             if($response !== NULL && !($email==='' && $password==='' && $name==='')){
-                if(is_int($response)) echo "<p>". $name ." não foi registrado</p>";
+                if($response['sucess'] === USER_NOT_FIND ) echo "<p>". $name ." não foi registrado</p>";
                 //nome encontrado mas inputs errado
                 else {
                     //false se o senha errado
@@ -90,13 +95,14 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
         </form>
     </main>
 
+    <footer>
     <a href="cadastrar.php">Cadastrar</a>
 <?php
 }
-
-
 ?>
-    <a href="../index.html">voltar</a>
+    
+        <a href="../index.html">voltar</a>
+    </footer>
   </body>
   <script src="auth.js"></script>
 </html>

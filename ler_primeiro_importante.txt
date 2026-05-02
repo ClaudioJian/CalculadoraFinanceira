@@ -27,6 +27,7 @@ CREATE TABLE data(
 CREATE TABLE historico(
     user_id int unsigned NOT NULL,
     tipo char(64) NOT NULL,
+    investimento char(64) NOT NULL,
     valor_a_ser_investido decimal(5,2) unsigned NOT NULL,
     prazo tinyint unsigned NOT NULL,
     investimento_seguinte decimal(5,2) unsigned NOT NULL,
