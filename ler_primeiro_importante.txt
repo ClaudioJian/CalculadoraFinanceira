@@ -29,7 +29,7 @@ CREATE TABLE historico(
     record_id int unsigned AUTO_INCREMENT NOT NULL PRIMARY KEY,
     tipo char(64) NOT NULL,
     investimento char(64) NOT NULL,
-    valor_a_ser_investido decimal(5,2) unsigned NOT NULL,
+    valor_a_ser_investido decimal(15,2) unsigned NOT NULL,
     prazo tinyint unsigned NOT NULL,
     investimento_seguinte decimal(5,2) unsigned NOT NULL,
     percentual_crescimento float unsigned NOT NULL,
