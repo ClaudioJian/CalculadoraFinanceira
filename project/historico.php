@@ -25,12 +25,16 @@ session_start();
 header("content-type:application/json");
 
 $conn = connect_database();
+
 if(is_array($conn) && $conn['sucess']===DB_ERR_CONNECTION) {
     echo json_encode($conn);
     exit();
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'GET'){
+
+$method = $_SERVER['REQUEST_METHOD'];
+
+if($method == 'GET'){
     $response = retrieve_graph_data($conn);
     $status = $response['sucess'];
 
@@ -39,14 +43,28 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
     echo json_encode($response);
     exit();
-}else if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $response = insert_historico($conn);
+}else if($method == 'POST'){
+    $inputs = get_post_values();
+    $code = $inputs['code'];
 
-    //diconnecting
-    $conn = NULL;
+    if($code === DB_INSERT){
+        $response = insert_historico($conn,$inputs['data']);
 
-    echo json_encode($response);
-    exit();
+        //diconnecting
+        $conn = NULL;
+
+        echo json_encode($response);
+        exit();
+    }
+    else if($code === DB_DELETE){
+        $response = delete_record($conn,$inputs['data']);
+
+        //diconnecting
+        $conn = NULL;
+
+        echo json_encode($response);
+        exit();
+    }
 }else{
     //invalid request
     //diconnecting

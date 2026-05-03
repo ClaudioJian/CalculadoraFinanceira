@@ -85,10 +85,10 @@ function user_alredy_exist(string $user_name,PDO $conn){
  * @param PDO $conn PDO object pointer to connection of database, can be finded by return value of connect_database()
  * @return object where contain all result of query
  * @return array
- * - sucess: ['sucess'=>52,'result'=>obj row/record finded] when sign up sucess
+ * - sucess: ['sucess'=>DB_INSERT,'result'=>obj row/record finded] when sign up sucess
+ * - ['sucess'=>USER_NOT_LOGGED,'description'=>'string'] if not logged
  * - ['sucess'=>USER_ALREDY_EXIST,'description'=>string] if user alredy exist in database
  * - ['sucess'=>DB_ERR_INSERT,'description'=>string] if cannot create in database
- * @throws error usuário não consegue registrar no database
  */
 function register_user(string $user_name,string $password,string $email,PDO $conn){
     try{
@@ -113,6 +113,38 @@ function register_user(string $user_name,string $password,string $email,PDO $con
     $conn = NULL;
 
     return ['sucess'=>52,'result'=>$result];
+}
+
+
+/**
+ * delete user from database
+ * 
+ * auto disconnect from database
+ * @param PDO $conn PDO object pointer to connection of database, can be finded by return value of connect_database()
+ * @return array
+ * - sucess: ['sucess'=>DB_DELETE,'result'=>obj row/record finded] when deleted
+ * - ['sucess'=>USER_NOT_LOGGED,'description'=>'string'] if not logged
+ * - ['sucess'=>USER_NOT_FIND,'description'=>'string'] if user not existed
+ * - ['sucess'=>DB_ERR_DELETE,'description'=>description] database fail to delete this user
+ */
+function delete_user(PDO $conn){
+    if(!is_logged()) return ['sucess'=>USER_NOT_LOGGED,'description'=>'not logged'];
+    if(!user_alredy_exist($_SESSION['user'],$conn)) return ['sucess'=>USER_NOT_FIND,'description'=>'usuário não existe'];
+    try{
+        //search row with this user
+        $query = "DELETE FROM data WHERE user_id=:user_id";
+        //query
+        $smtm = $conn->prepare($query);
+        $smtm->bindParam(':user_id',$_SESSION['user_id']);
+        if(!($smtm->execute())) throw new Exception("Database não consegue deletar o usuário!");
+    }catch(Exception $e){
+        $conn = NULL;
+        return ['sucess'=>DB_ERR_DELETE,'description'=>$e->getMessage()];
+    }
+
+    $conn = NULL;
+
+    return ['sucess'=>DB_DELETE,'description'=>'user deleted'];
 }
 
 ?>

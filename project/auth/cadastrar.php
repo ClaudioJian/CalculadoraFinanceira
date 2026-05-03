@@ -94,7 +94,8 @@ else{
     <footer>
         <!--deslogar-->
         <a href="deslogin.php">deslogin</a>
-        
+        <h1>Pergunte se usuário realmente quer deletar antes de entrar o link!!!</h1>
+        <a href="delete_user.php">deletar seu usuário</a>
 <?php } ?>  
         <a href="../index.html">voltar</a>
     </footer>

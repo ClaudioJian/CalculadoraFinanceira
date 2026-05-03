@@ -68,6 +68,8 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
     <footer>
         <!--deslogar-->
         <a href="deslogin.php">deslogin</a>
+        <h1>Pergunte se usuário realmente quer deletar antes de entrar o link!!!</h1>
+        <a href="delete_user.php">deletar seu usuário</a>
 <?php }else{ ?>
     <!--informa se o usuário não está logado-->
     <header>
@@ -78,7 +80,7 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
             if($response !== NULL && !($email==='' && $password==='' && $name==='')){
                 if($response['sucess'] === USER_NOT_FIND ) echo "<p>". $name ." não foi registrado</p>";
                 //nome encontrado mas inputs errado
-                else {
+                else if($response['sucess'] === USER_WRONG_CREDIT){
                     //false se o senha errado
                     if($response['password']){ echo "<p>Senha incorreto</p>";}
                     if($response['email']) {echo "<p>Email incorreto</p>";}

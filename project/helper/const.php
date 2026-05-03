@@ -31,7 +31,11 @@ define('DB_ERR_CONNECTION',-50);
 define('DB_ERR_GRANT',-51);
 define('DB_ERR_INSERT',-52);
 define('DB_ERR_UPDATE',-53);
-define('DB_ERR_DROP',-54);
+define('DB_ERR_DELETE',-54);
 define('DB_ERR_SELECT',-55);
+
+define('DB_INSERT',52);
+define('DB_DELETE',54);
+define('DB_SELECT',55);
 
 ?>
