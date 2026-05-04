@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>*Nome da empresa*</title>
+    <link rel="stylesheet" href="esqueleto.css"/>
+  </head>
+  <body>
+    <form>
+      tipo<input id="tipo" required><br><br>
+      investimento<input id="investimento" required><br><br>
+      valor_a_ser_investido<input id="valor_a_ser_investido" required><br><br>
+      prazo<input id="prazo" required> <br><br>
+      investimento_seguinte<input id="investimento_seguinte" required><br><br>
+      percentual_crescimento<input id="percentual_crescimento" required><br><br>
+      <button id="post" type="submit">INSERIR</button><br><br>
+    </form>
+
+
+    
+    <button id="get">GET DATA</button><br>
+  </body>
+
+  <form id="delete_records">
+    record_id1:<input id="record_id1" required></input>
+    record_id2:<input id="record_id2" required></input>
+    <button id="post" type="submit">DELETE RECORDS</button>
+  </form>
+
+  
+  <script src="../js/grab_data_from_database/function_for_grab_and_insert.js"></script>
+  <script src="test.js"></script>
+
+</html>
+

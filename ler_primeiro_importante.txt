@@ -2,4 +2,43 @@
 nosso trabalho é entregar todas as opções logo na página principal, infelizmente ela ainda está incompleta,
 pois estamos tentando implementar o php com o javascript e ainda terá um sistema de gráficos. 
 
+SQL código para criar table:
+* avaliamos que o simplicidade é mais importante do que segurança, manuntenbilidade, portabilidade e entre outras caricterística.
+portanto, alguns comando abaixo NÃO É RECOMENTADO por muitos autores.
+SE SEU máquina não usa WINDOWS, não tem garantia de não vai dar erro.
+Você deve inserir os dados manualmente para testar!!!!
+copia o código abaixo para o shell do xampss ou de phpadmin(não copie comentário)
+
+// se esse linha não consegue logar, deleta seu senha do root senão o aplicativo não vai rodar
+// apesar de que é recomendado de não usar o root e deve colocar o senha e menor acesso possível para cada user...
+mysql -u root
+
+CREATE DATABASE calculator_financeiro;
+
+use calculator_financeiro;
+
+CREATE TABLE data(
+    user_id int unsigned AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    name varchar(64) UNIQUE NOT NULL,
+    senha char(64) NOT NULL,
+    email char(64) NOT NULL
+);
+
+CREATE TABLE historico(
+    user_id int unsigned NOT NULL,
+    record_id int unsigned AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    tipo char(64) NOT NULL,
+    investimento char(64) NOT NULL,
+    valor_a_ser_investido decimal(15,2) unsigned NOT NULL,
+    prazo tinyint unsigned NOT NULL,
+    investimento_seguinte decimal(5,2) unsigned NOT NULL,
+    percentual_crescimento float unsigned NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES data(user_id) ON DELETE CASCADE
+);
+
+// ON DELETE CASCADE: se o key primary indicado por ele, todos foreign key com mesma key tmb vai ser deletado
+
+// não criar usuário e dar privilégio mínima para login não é boa ideia, pois ele pode deletar todo database se ele quer 
+// não criar index não é boa ideia, pois isso vai fazer que o query MUITO DEVAGAR
+
 Cordialmente, Gabriel e Claudio"
