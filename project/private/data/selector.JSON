@@ -102,28 +102,28 @@
             "class":"imposto_D",
             "type":"imposto_servico",
             "depencitytype":"imposto",
-            "order":"9",
+            "order":"10",
             "innerElements":"Imposto sobre serviço(ISS)"
             },
             {
             "class":"imposto_E",
             "type":"pis_cofins",
             "depencitytype":"imposto",
-            "order":"10",
+            "order":"11",
             "innerElements":"PIS/COFINS"
             },
             {
             "class":"imposto_F",
             "type":"cdfm",
             "depencitytype":"imposto",
-            "order":"11",
+            "order":"12",
             "innerElements":"CDFM(histórico/referência)"
             },
             {
             "class":"imposto_G",
             "type":"taxa_custodia",
             "depencitytype":"imposto",
-            "order":"12",
+            "order":"13",
             "innerElements":"Taxa de Custódia/Operacionais"
             }
         ]
@@ -235,6 +235,134 @@
             "depencitytype":"",
             "order":"4",
             "innerElements":"10 Anos"
+            }
+        ]
+    },
+    "4":{
+        "container_class":"selector-container",
+        "class":"s5",
+        "filterID":"",
+        "depencityID":"",
+        "default_selected":{
+            "class":"gráfico g1",
+            "type":"",
+            "depencitytype":"",
+            "order":"0",
+            "innerElements":""
+            },
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"1",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"2",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g3",
+            "type":"",
+            "depencitytype":"",
+            "order":"3",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g4",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g6",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            }
+        ]
+    },
+    "5":{
+        "container_class":"selector-container",
+        "class":"s6",
+        "filterID":"",
+        "depencityID":"",
+        "default_selected":{
+            "class":"gráfico g1",
+            "type":"",
+            "depencitytype":"",
+            "order":"0",
+            "innerElements":""
+            },
+        "item_class":"css-container-itens",
+        "itens":[{
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"1",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g2",
+            "type":"",
+            "depencitytype":"",
+            "order":"2",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g3",
+            "type":"",
+            "depencitytype":"",
+            "order":"3",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g4",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g5",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
+            },
+            {
+            "class":"gráfico g6",
+            "type":"",
+            "depencitytype":"",
+            "order":"4",
+            "innerElements":""
             }
         ]
     }
