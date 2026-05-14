@@ -2,12 +2,21 @@
 para que o página pode usar esses função, coloque isso:
 <script src="js/grab_data_from_database/function_for_grab_and_insert.js"></script>
 
+Para acessar o resultado retornado por função, faça como:
+const result = função(parametros);
+result['dado1']['dado2'][...]...;
+
 resultado retornado sempre tem: result['sucess'] e result['description']
 se result['sucess'] <= 0, o não foi sucesso
 
-function can uses: get_data();
-insert_data(tipo,investimento,val_inv,prazo,inv_next,perc_cresc);
-delete_records(array_ids); // array_id = [record_id1,record_id2,...]. vai tem atributo adicional ['affected_rows'] que indica quantos deletou
+Você deve amarzenar o record_id no front-end para que você pode saber qual dado usuário escolheu para comunicar com database
+
+function can uses: 
+get_data(); retorna {n:{tipo:string,prazo:int,...},sucess:int,description:string}
+insert_data(tipo,investimento,val_inv,prazo,inv_next,perc_cresc); retorna {sucess:int,description:string,record_id:int}
+delete_records(array_ids); // array_id = [record_id1,record_id2,...]. retorna {sucess:int, description:string,affected_rows:int}, onde affected_rows que indica quantos deletou
+
+
 
 */
 

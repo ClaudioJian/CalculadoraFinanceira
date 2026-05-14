@@ -110,6 +110,7 @@ function register_user(string $user_name,string $password,string $email,PDO $con
 
     //return entire row of that user, to set information into session
     $result = retrieve_user_data($user_name,$conn);
+
     $conn = NULL;
 
     return ['sucess'=>52,'result'=>$result];

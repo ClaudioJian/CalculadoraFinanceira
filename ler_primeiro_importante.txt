@@ -1,6 +1,9 @@
-"Perdão professor, mas o nosso projeto inicialmente não tem uma página de php que leva a outra, o objetivo do
-nosso trabalho é entregar todas as opções logo na página principal, infelizmente ela ainda está incompleta,
-pois estamos tentando implementar o php com o javascript e ainda terá um sistema de gráficos. 
+"Perdão professor, não tivemos tempo suficiente para arrumar o html. A resolução provalvemente é usar elemento tabela do html e tirar position:absolute.
+O objetivo do nosso trabalho é entregar todas as opções logo na página principal, infelizmente ela ainda está incompleta,
+pois estamos tentando implementar o php com o javascript e ainda terá um sistema de gráficos. "
+
+Cordialmente, Gabriel e Claudio
+
 
 SQL código para criar table:
 * avaliamos que o simplicidade é mais importante do que segurança, manuntenbilidade, portabilidade e entre outras caricterística.
@@ -41,4 +44,4 @@ CREATE TABLE historico(
 // não criar usuário e dar privilégio mínima para login não é boa ideia, pois ele pode deletar todo database se ele quer 
 // não criar index não é boa ideia, pois isso vai fazer que o query MUITO DEVAGAR
 
-Cordialmente, Gabriel e Claudio"
+

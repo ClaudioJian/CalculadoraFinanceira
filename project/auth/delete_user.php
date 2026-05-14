@@ -18,7 +18,7 @@ $logged = is_logged();
   </head>
 
   <body>
-
+    <div class="box">
 <?php if($logged){ 
     //guardar informação se presica exibir
     $user = $_SESSION['user'];
@@ -58,11 +58,12 @@ $logged = is_logged();
 <?php
 }
 ?>
-    <footer>
-        <a href="cadastrar.php">Cadastrar</a>
-        <a href="login.php">Login</a>
-        <a href="../index.html">voltar</a>
-    </footer>
+        <footer class="borda">
+            <a href="cadastrar.php">Cadastrar</a>
+            <a href="login.php">Login</a>
+            <a href="../index.html">voltar</a>
+        </footer>
+    </div>
   </body>
   <script src="auth.js"></script>
 </html>

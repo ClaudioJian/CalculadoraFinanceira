@@ -7,7 +7,6 @@
   +-----------------------------------------------+
 */
 
-
 /**
  * echo html for this error(fail to register user info, user alredy exist)
  * 
@@ -18,7 +17,7 @@
  * PLEASE CHANGE THIS CODE!!!
  */
 function ERR_user_alredy_exist($input){
-    echo "alredy exist";
+    echo "Já existe";
     exit();
 }
 
@@ -32,7 +31,7 @@ function ERR_user_alredy_exist($input){
  * PLEASE CHANGE THIS CODE!!!
  */
 function ERR_registration($input){
-    echo "fail to registration";
+    echo "falhou em registrar, tente novamente";
     exit();
 }
 
@@ -44,7 +43,7 @@ function ERR_registration($input){
  * PLEASE CHANGE THIS CODE!!!
  */
 function ERR_conn_db(){
-
+    echo "Ocorreu um erro. Tente novamente mais tarde.";
     exit();
 }
 

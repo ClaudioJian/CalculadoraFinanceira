@@ -55,7 +55,7 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
   </head>
 
   <body>
-
+    <div class="box">
 <?php 
 //se não está logado e todos valores são nulos
 if(!$logged && ($email==='' && $password==='' && $name==='')){ ?>
@@ -65,15 +65,14 @@ if(!$logged && ($email==='' && $password==='' && $name==='')){ ?>
     </header>
     <main>
         <form method="POST" action="cadastrar.php">
-            nome:<input name="nome" type="text" value="<?= htmlspecialchars($name)??'' ?>" required>
-            email:<input name="email" type="email" autocomplete="email" value="<?= htmlspecialchars($email)??'' ?>" required>
+            nome:<input name="nome" type="text" value="<?= htmlspecialchars($name)??'' ?>" required><br>
+            email:<input name="email" type="email" autocomplete="email" value="<?= htmlspecialchars($email)??'' ?>" required><br>
             senha:<input name="senha" type="password" autocomplete="current-password" value="<?= htmlspecialchars($password)??'' ?>" required>
-            <button type="submit">Enviar</button>
+            <button type="submit" class="b3">Enviar</button>
         </form>
     </main>
-
-    <footer>
-        <a href="login.php">login</a>
+    <footer class="borda">
+            <a href="login.php">login</a>
 <?php }
 // se é logado e o valor é nulo, significa que vem de outro página
 else{
@@ -91,14 +90,15 @@ else{
         <p> Cadastrado com sucesso!</p>
     </header>
 <?php } ?>
-    <footer>
+        <footer class="borda">
         <!--deslogar-->
-        <a href="deslogin.php">deslogin</a>
-        <h1>Pergunte se usuário realmente quer deletar antes de entrar o link!!!</h1>
-        <a href="delete_user.php">deletar seu usuário</a>
+            <a href="deslogin.php">deslogin</a>
+            <a href="delete_user.php">deletar seu usuário</a>
 <?php } ?>  
-        <a href="../index.html">voltar</a>
-    </footer>
+            <a href="../index.html">voltar</a>
+        
+        </footer>
+    </div>
   </body>
   <script src="auth.js"></script>
 </html>

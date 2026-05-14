@@ -62,7 +62,7 @@ function retrieve_graph_data(PDO $conn){
  * Please disconnect from database if you aren't use it any more.
  * @param PDO $conn PDO object pointer to connection of database, can be finded by return value of connect_database()
  * @return array 
- * - sucess: ['sucess'=>DB_INSERT,'description'=>string]
+ * - sucess: ['record_id'=>int,'sucess'=>DB_INSERT,'description'=>string]
  * - ['sucess'=>USER_NOT_LOGGED,'description'=>string] when not logged
  * - ['sucess'=>DB_ERR_INSERT,'description'=>string] when cannot register
  * 
@@ -98,7 +98,8 @@ function insert_historico(PDO $conn,array $inputs){
         $conn = NULL;
         return ['sucess'=>DB_ERR_INSERT,'description'=>$e->getMessage()];
     }
-    return ['sucess'=>DB_INSERT,'description'=>'data saved'];
+    //retrive inserted id
+    return ['record_id'=>$conn->lastInsertId(),'sucess'=> DB_INSERT,'description' => 'data saved'];
 }
 
 

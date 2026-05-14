@@ -12,25 +12,23 @@
       <main>
         <!--menu-->
         <div class="css-menu-container">
-          <div>
-            <nav class="css-menu" data-type="extendedBox" data-for="menu" data-targetboxid="menu">
-              <div class="menu-header"></div>
-              <div class="instrucao i8">texto aqui(login)</div>
-              <div class="menu-divider m1"></div>
-              <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
-              <a href="auth/login.php">login(TESTE)</a>
-              <a href="test/test.html">test</a>
-              <div class="instrucao i9">outras páginas(outras páginas)</div>
-              <div class="menu-divider m2"></div>
-              <form>
-                <input placeholder="test" name="test">
-              </form>
-              <div class="instrucao i10">texto aqui(histórico)</div>
-              <div class="menu-divider m3"></div>
-              <div class="resizer" data-direction="e"></div>
-            </nav>
-          </div>
-
+          <nav class="css-menu" data-type="extendedBox" data-for="menu" data-targetboxid="menu">
+            <div class="menu-header"></div>
+            <div class="instrucao i8">texto aqui(login)</div>
+            <div class="menu-divider m1"></div>
+            <a href="test/test.html" class="test">test</a>
+            <a href="auth/login.php" style="position: absolute;top: 70px;left:10px;">login</a>
+            <div class="instrucao i9">outras páginas(outras páginas)</div>
+            <div class="menu-divider m2"></div>
+            <a href="https://github.com/ClaudioJian/CalculadoraFinanceira.git">teste-Github-Link</a>
+            <div class="instrucao i10">texto aqui(histórico)</div>
+            <div class="menu-divider m3"></div>
+            <form>
+              <input placeholder="test" name="test" class="texto">
+            </form>
+            
+            <div class="resizer" data-direction="e"></div>
+          </nav>
           <!--button for open menu-->
           <div class="css-menu-btn">
             <button style="height: fit-content;" class="img-button">
@@ -211,6 +209,110 @@
           
         </section>
         
+        <div class="instrucoes">
+          
+          <div class="instrucao i5">Tipo de gráfico</div>
+          
+        </div>
+
+        <!--selector-->
+        <div class="selector-container s1">
+          <div class="instrucao i1">O que seria?</div>
+          <section id="0">
+            <button class="selector" data-action="open-selector" data-type="extendable" data-filterid="0" >
+              <ul class="investimento"  data-type="investimento"  data-order="0" >investimento</ul>
+            </button>
+            <nav class="css-container-itens"  data-type="extendedBox">
+              <ul class="imposto"  data-type="imposto"  data-order="1" >Imposto</ul>
+            </nav>
+          </section>
+        </div>
+        
+        <div class="selector-container s2">
+          <div class="instrucao i2">Tipo?</div>
+           <section  id="1">
+            <button class="selector" data-action="open-selector" data-type="extendable" data-filterid="1" >
+              <span></span>
+            </button>
+            <nav class="css-container-itens"  data-type="extendedBox" data-depencityid="0" >
+              <ul data-type="all"  data-order="0" >ALL</ul><ul class="investimento_B"  data-type="cdi"  data-depencitytype="investimento"  data-order="1" >CDI</ul>
+              <ul class="investimento_C"  data-type="cdb"  data-depencitytype="investimento"  data-order="2" >CDB</ul>
+              <ul class="investimento_D"  data-type="tesouro_direto"  data-depencitytype="investimento"  data-order="3" >Tesouro Direto</ul>
+              <ul class="investimento_E"  data-type="acoes"  data-depencitytype="investimento"  data-order="4" >Ações</ul>
+              <ul class="investimento_F"  data-type="fiis"  data-depencitytype="investimento"  data-order="5" >Fundo Imobiliários(FIIs)</ul>
+              <ul class="investimento_G"  data-type="poupança"  data-depencitytype="investimento"  data-order="6" >Poupança</ul>
+              <ul class="imposto_A"  data-type="ir"  data-depencitytype="imposto"  data-order="7" >Imposto de Renda(IR)</ul>
+              <ul class="imposto_B"  data-type="iof"  data-depencitytype="imposto"  data-order="8" >Imposto sobre operações financeiras (IOF)</ul>
+              <ul class="imposto_C"  data-type="come_cotas"  data-depencitytype="imposto"  data-order="9" >Come cotas(fundos de investimentos)</ul>
+              <ul class="imposto_D"  data-type="imposto_servico"  data-depencitytype="imposto"  data-order="9" >Imposto sobre serviço(ISS)</ul>
+              <ul class="imposto_E"  data-type="pis_cofins"  data-depencitytype="imposto"  data-order="10" >PIS/COFINS</ul>
+              <ul class="imposto_F"  data-type="cdfm"  data-depencitytype="imposto"  data-order="11" >CDFM(histórico/referência)</ul>
+              <ul class="imposto_G"  data-type="taxa_custodia"  data-depencitytype="imposto"  data-order="12" >Taxa de Custódia/Operacionais</ul>
+            </nav>
+          </section>
+        </div>
+       
+<!--
+        <div class="selector-container s3">
+          <section id="2">
+          <button class="selector" data-action="open-selector" data-type="extendable">
+            <span></span>
+          </button>
+          <nav class="css-container-itens"  data-type="extendedBox" data-depencityid="1" >
+            
+            <ul class="imposto_F"  data-depencitytype="imposto_B"  data-order="0" >imposto tipo F-need imposto tipoB</ul>
+            <ul class="imposto_G"  data-depencitytype="imposto_A"  data-order="1" >imposto tipo G-need imposto tipoA</ul>
+            <ul class="investimento_H"  data-depencitytype="investimento_C"  data-order="2" >investimento tipo C-need investimento tipoC</ul>
+            <ul class="investimento_I"  data-depencitytype="investimento_B"  data-order="3" >investimento tipo I-need investimento tipoB</ul>
+            <ul class="investimento_J"  data-depencitytype="investimento_C"  data-order="4" >investimento tipo J-need investimento tipoC</ul>
+            
+            </nav>
+          </section>
+        </div>
+-->        
+
+        <div>
+          <section class="quantidade-container">
+            <div class="instrucao i3">Valores investidos sequintes</div>
+            <input type="number" class="quantidade" placeholder="R$1000" required></input>
+          </section>
+          
+          <section class="q_posterior-container">
+            <div class="instrucao i6">Valores posteriores seguintes</div>
+            <input type="number" class="q_posterior" placeholder="R$1000" required></input>
+          </section>
+          
+          <section class="q_porcentual-container">
+            <div class="instrucao i7">Porcentual do valor</div>
+            <input type="number" class="q_porcentual" placeholder="101,5%" required ></input>
+          </section>
+        </div> 
+
+        <!--selector-->
+        <div class="selector-container s4">
+          <div class="instrucao i4">Prazo</div>
+          <section  id="3">
+            <button class="selector" data-action="open-selector" data-type="extendable">
+              <ul class="gráfico g1"  data-order="0" >1 Mês</ul>
+            </button>
+            <nav class="css-container-itens"  data-type="extendedBox">
+              <ul class="gráfico g2"  data-order="1" >3 Meses</ul>
+              <ul class="gráfico g2"  data-order="2" >6 meses</ul>
+              <ul class="gráfico g3"  data-order="3" >1 Ano</ul>
+              <ul class="gráfico g4"  data-order="4" >1 Ano</ul>
+              <ul class="gráfico g5"  data-order="4" >3 Anos</ul>
+              <ul class="gráfico g5"  data-order="4" >5 Anos</ul>
+              <ul class="gráfico g6"  data-order="4" >10 Anos</ul>
+            </nav>
+          </section>
+        </div>
+
+        <!--
+          <div class="selector-container selector  s5"></div>
+        
+          <div class="selector-container selector  s6"></div>
+        -->
+        
 
       
         <!--buttons-->
@@ -221,6 +323,11 @@
         </div>
 
       </main>
+
+      
+
+
+      <a href="test/test.html" style="position: absolute;top: 500px;">test</a>
 
       <script src="js/helper.js"></script>
       <script type="module" src="js/main.js"></script>

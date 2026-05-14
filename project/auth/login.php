@@ -49,7 +49,7 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
   </head>
 
   <body>
-
+    <div class="box">
 <?php if($logged){?>
     <!--informa se o usuário está logado-->
     <header>
@@ -65,17 +65,16 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
 
     </header>
 
-    <footer>
+    <footer class="borda">
         <!--deslogar-->
         <a href="deslogin.php">deslogin</a>
-        <h1>Pergunte se usuário realmente quer deletar antes de entrar o link!!!</h1>
         <a href="delete_user.php">deletar seu usuário</a>
 <?php }else{ ?>
     <!--informa se o usuário não está logado-->
     <header>
-        <p> Você não está logado!</p>
+        <p style="top: 5px;left:10px; display:inline;"> Você não está logado!</p>
         <!--motivo-->
-        <?php 
+        <?php
             // not found por nome
             if($response !== NULL && !($email==='' && $password==='' && $name==='')){
                 if($response['sucess'] === USER_NOT_FIND ) echo "<p>". $name ." não foi registrado</p>";
@@ -89,22 +88,23 @@ if(!$logged && !($email==='' && $password==='' && $name==='')) {
         ?>
     </header>
     <main>
-        <form method="POST" action="login.php">
-            nome:<input name="nome" type="text" value="<?= htmlspecialchars($name)??'' ?>" required>
-            email:<input name="email" type="email" autocomplete="email" value="<?= htmlspecialchars($email)??'' ?>" required>
+        <form method="POST" action="login.php" style="top: 70px;left:10px;">
+            <br>
+            nome:<input name="nome" type="text" value="<?= htmlspecialchars($name)??'' ?>" required><br>
+            email:<input name="email" type="email" autocomplete="email" value="<?= htmlspecialchars($email)??'' ?>" required><br>
             senha:<input name="senha" type="password" autocomplete="current-password" value="<?= htmlspecialchars($password)??'' ?>" required>
-            <button type="submit">Enviar</button>
+            <button type="submit" class="b2">Enviar</button>
         </form>
     </main>
-
-    <footer>
-    <a href="cadastrar.php">Cadastrar</a>
+        <footer class="borda">
+            <a href="cadastrar.php">Cadastrar</a>  
+    
 <?php
 }
 ?>
-    
-        <a href="../index.html">voltar</a>
-    </footer>
+            <a href="../index.html">Voltar</a>
+        </footer>
+    </div>
   </body>
   <script src="auth.js"></script>
 </html>
