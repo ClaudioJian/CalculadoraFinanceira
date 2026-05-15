@@ -23,7 +23,7 @@
  * @return array 
  * - sucess: ['sucess'=>DB_SELECT,'int n'=>obj row/records,'description'=>string] give array of obj where contain all result of query
  * - ['sucess'=>USER_NOT_LOGGED,'description'=>string] when not logged
- * - ['sucess'=>USER_NOT_FIND,'description'=>string] if no find
+ * - ['sucess'=>DATA_NOT_FOUND,'description'=>string] if no find
  * - ['sucess'=>DB_ERR_SELECT,'description'=>string] if some error happens when doing query
  */
 function retrieve_graph_data(PDO $conn){
@@ -42,7 +42,7 @@ function retrieve_graph_data(PDO $conn){
         $smtm->execute();
 
 
-        if($smtm->rowCount()<1) return ['sucess'=>USER_NOT_FIND,'description'=>'no record find'];
+        if($smtm->rowCount()<1) return ['sucess'=>DATA_NOT_FOUND,'description'=>'no record find'];
         //the result will be in obj
         $result = $smtm->fetchAll(PDO::FETCH_OBJ);
         $result['sucess'] = DB_SELECT;
@@ -54,6 +54,139 @@ function retrieve_graph_data(PDO $conn){
         return ['sucess'=>DB_ERR_SELECT,'description'=>$e->getMessage()];
     }
 }
+
+/**
+ * filter record id array passed and return array filtered with only existing array
+ * @param PDO $conn Database connection.
+ * @return array 
+ * contain only records filtered and sucess state
+ * - if no record find for this user: ['sucess'=>DB_ERR_UPDATE,'description'=>"user don't have any data registered"]
+ * 
+ * - if user has record but record id passed don't exist: ['sucess'=>DB_ERR_UPDATE,'description'=>"record id passed don't exist for this user"];
+ * 
+ * - error when selecting/executing
+ */
+function filter_record(array $input,PDO $conn){
+    try{
+        $query = "SELECT record_id FROM historico WHERE user_id=:uid";
+        $smtm = $conn->prepare($query);
+        $smtm->bindParam(':uid',$_SESSION['user_id']);
+        $smtm->execute();
+
+        if($smtm->rowCount()<=0) return ['sucess'=>DATA_NOT_FOUND,'description'=>"user don't have any data registered"];
+        //add to buffer only data valid
+        $buffer = [];
+        $exist=0;
+        while($result = $smtm->fetch(PDO::FETCH_OBJ)){
+            if(isset($input[$result->record_id])) {
+                $buffer[$result->record_id] = $input[$result->record_id];
+                $exist = 1;
+            }
+        }
+
+        if(!$exist) return ['sucess'=>REQUEST_INVALID_INPUT,'description'=>"record id passed don't exist for this user"];
+        else {
+            $buffer['sucess']= DB_SELECT;
+            $buffer['description'] = 'record id exists';
+            return $buffer;
+        }
+    }catch(PDOException $e){
+        $conn = NULL;
+        return ['sucess'=>DB_ERR_SELECT,'description'=>$e->getMessage()];
+    }
+}
+
+
+
+
+/**
+ * bind all non null input to param smtm
+ * 
+ * It will bind the param with input that have same key name as field name
+ * 
+ * Example: tipo=:tipo
+ * @param array $field contain all input key name send by front-end
+ */
+function bind_avaible_param(array $inputs,array $field,PDOStatement $smtm){
+    $buf = [];
+    foreach($field as $f){
+        // example tipo=:tipo
+        if(isset($inputs[$f])) $smtm->bindValue(':'.$f, $inputs[$f]);
+        $buf[] = ":".$f." && ". $inputs[$f];
+    }
+    return $buf;
+}
+
+/**
+ * prefix ":" to all value(non associative array) and separate with ","
+ * 
+ * @param array $field list of all input name(post)
+ * @param int $mode 0 default, NAMED_PARAM_EQUI turn to (field_name=:field_name)
+ * @return string
+ * 
+ * - named param with same value name in field
+ */
+function named_parameter(array $field,array $inputs,int $mode = 0){
+    $buffer = [];
+    foreach($field as $f){
+        $prefix = $mode === NAMED_PARAM_EQUI ? $f."=" : "";
+        if(isset($inputs[$f])) $buffer [] = $prefix.':'.$f;
+    }
+    return join(', ',$buffer);
+}
+
+
+/**
+ * receive data like [record_id=>[data1=>data2],record_id2=>[...]] and update all record of logged user
+ */
+function update_record(PDO $conn,array $inputs){
+    if(!is_logged()) return ['sucess'=>USER_NOT_LOGGED,'description'=>'not logged'];
+    
+
+    try{
+        $data = filter_record($inputs,$conn);
+
+        if($data['sucess']<=0) {
+            return $data;
+        }
+
+        $conn->beginTransaction();
+
+        //list all possible data from front-end
+        $allowed_field =['tipo','investimento','valor_a_ser_investido','prazo','investimento_seguinte','percentual_crescimento'];
+        $affected_rows = 0;
+
+        foreach($data as $rid=>$fields){
+            $fields =(array)$fields;
+            $all_updates = named_parameter($allowed_field,$fields,NAMED_PARAM_EQUI);
+            
+            // no update
+            if(empty($all_updates)) continue;
+
+            $query = "UPDATE historico SET ".$all_updates." WHERE user_id=:user_id AND record_id=:record_id";
+            
+            $smtm = $conn->prepare($query);
+
+            $smtm->bindValue(':record_id',$rid,PDO::PARAM_INT);
+            $smtm->bindValue(':user_id',$_SESSION['user_id'],PDO::PARAM_INT);
+
+            bind_avaible_param($fields,$allowed_field,$smtm);
+
+            if(!($smtm->execute())) throw new Exception("Não consegue atualizar esses dados!");
+
+            $affected_rows += $smtm->rowCount();
+        }
+        $conn->commit();
+        //retrive inserted id
+        return ['sucess'=> DB_UPDATE,'description' => 'data updated','affected_rows'=> $affected_rows];
+    }catch(Exception $e){
+        $conn->rollBack();
+        $conn = NULL;
+        return ['sucess'=>DB_ERR_UPDATE,'description'=>$e->getMessage()];
+    }
+
+}
+
 
 /**
  * insert data to database by using POST array
@@ -71,27 +204,22 @@ function insert_historico(PDO $conn,array $inputs){
     if(!is_logged()) return ['sucess'=>USER_NOT_LOGGED,'description'=>'not logged'];
 
     try{
-
+        $field = ['tipo','investimento','valor_a_ser_investido','prazo','investimento_seguinte','percentual_crescimento'];
         //search row with same name
         $query = "
         INSERT INTO historico
-        (user_id,tipo,investimento,valor_a_ser_investido,prazo,investimento_seguinte,percentual_crescimento)
+        (". join(',',$field) .", user_id".")
         VALUES
-        (:id,:type,:inv,:vi,:p,:invs,:pc)
+        (". named_parameter($field,$inputs) .", :user_id".")
         ";
 
 
         //query
         $smtm = $conn->prepare($query);
 
+        $smtm->bindValue(':user_id',$_SESSION['user_id']);
         //bind parameters
-        $smtm->bindParam(':id',$_SESSION['user_id']);
-        $smtm->bindParam(':type',$inputs['tipo']);
-        $smtm->bindParam(':inv',$inputs['investimento']);
-        $smtm->bindParam(':vi',$inputs['valor_a_ser_investido']);
-        $smtm->bindParam(':p',$inputs['prazo']);
-        $smtm->bindParam(':invs',$inputs['investimento_seguinte']);
-        $smtm->bindParam(':pc',$inputs['percentual_crescimento']);
+        bind_avaible_param($inputs,$field,$smtm);
 
         if(!($smtm->execute())) throw new Exception("Não consegue inserir esses dados!");
     }catch(Exception $e){

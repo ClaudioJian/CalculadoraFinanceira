@@ -13,6 +13,11 @@
   | result[n]: where n is int and indicate as index of each row/record finded.                      |
   | result[n].variableName to acess value                                                           |
   |                                                                                                 |
+  | Possible data:                                                                                  |
+  | result["code"]: code for indentify what this request want do                                    |
+  | result["data"]: all posted value.                                                               |
+  | result["description"] : string                                                                  |
+  |                                                                                                 |
   | When inserting data(receive request with method GET) return state of request                    |
   |                                                                                                 |
   +-------------------------------------------------------------------------------------------------+
@@ -65,11 +70,23 @@ if($method == 'GET'){
         echo json_encode($response);
         exit();
     }
+    else if($code === DB_UPDATE){
+        $response = update_record($conn,$inputs['data']);
+
+        //diconnecting
+        $conn = NULL;
+
+        echo json_encode($response);
+        exit();
+    }
+    else{
+        echo json_encode(['sucess'=>REQUEST_INVALID,'description'=>'unkown request format']);
+    }
 }else{
     //invalid request
     //diconnecting
     $conn = NULL;
-    echo json_encode(['sucess'=>-100,'description'=>'invalid request']);
+    echo json_encode(['sucess'=>REQUEST_INVALID,'description'=>'invalid request']);
     exit();
 }
 ?>

@@ -13,11 +13,21 @@ Você deve amarzenar o record_id no front-end para que você pode saber qual dad
 
 function can uses: 
 get_data(); retorna {n:{tipo:string,prazo:int,...},sucess:int,description:string}
+
 insert_data(tipo,investimento,val_inv,prazo,inv_next,perc_cresc); retorna {sucess:int,description:string,record_id:int}
+
+uptade_records(data); retorna {sucess:int, description:string,affected_rows:int} .você precisa passar os dados em seguinte formato:
+{
+record_id1: { //<- esse é primeiro histórico que usuário quer upload
+        tipo: string tipo,
+        investimento: string,        //<- os valores podem ser incluído se não precisa ser atualiza(os valores no esquerda devem ter mesmo nome com database valor)
+        valor_investido: valor,
+        //...etc
+    },
+record_id2:{//...etc}      //<- esse é segundo histórico que usuário quer upload
+}
+
 delete_records(array_ids); // array_id = [record_id1,record_id2,...]. retorna {sucess:int, description:string,affected_rows:int}, onde affected_rows que indica quantos deletou
-
-
-
 */
 
 
@@ -42,6 +52,7 @@ delete_records(array_ids); // array_id = [record_id1,record_id2,...]. retorna {s
 
 
 const DB_INSERT = 52;
+const DB_UPDATE = 53;
 const DB_DELETE = 54;
 
 /**
@@ -98,7 +109,7 @@ async function get_data(){
  *  //... others codes go here
  * });
  * @returns {Promise<object|null>} 
- * - Sucess: Returns [sucess:int,description:string]
+ * - Sucess: Returns [record_id:int,sucess:int,description:string]
  * - Fail : Returns an object [sucess: negative int,description:string] and logs the error to the console.
  * - Error: Returns null and logs the error to the console.
 */
@@ -124,6 +135,51 @@ async function insert_data(tipo,investimento,val_inv,prazo,inv_next,perc_cresc){
     if(result!==null) return result;
     else return null;
 }
+
+
+
+
+/** 
+ * 
+ * Need parent function be async!!!
+ * 
+ * You can ignore some value to pass(except for record id, assuming you store and get from front-end).
+ * * @async
+ * @example
+ * // $data is (record_id,tipo,investimento,val_inv,prazo,inv_next,perc_cresc)
+ * async any_function($data){const result = await update_records($data); return result;}
+ * const response = any_function(data);
+ * if(response['sucess']<=0) ... <- action failed
+ * //OR
+ * whatever.addEventListener("anyEvent",async(event)=>{
+ *  const response = await update_records($data);
+ *  //... others codes go here
+ * });
+ * @param array data {record_id:{tipo:"tipo","investimento:"..."},record_id2:{...}}
+ * @returns {Promise<object|null>} 
+ * - Sucess: Returns [sucess:int,description:string]
+ * - Fail : Returns an object [sucess: negative int,description:string] and logs the error to the console.
+ * - Error: Returns null and logs the error to the console.
+*/
+async function update_records(data){
+    const response = await fetch("./../historico.php",{
+        method:"POST",
+        body:JSON.stringify(
+            {
+            data:data,
+            code:DB_UPDATE,
+            description:"UPDATE"
+        })
+    });
+
+    const result = await check_response(response);
+    if(result!==null) return result;
+    else return null;
+}
+
+
+
+
 
 /**
  * delete rows in database historico indicated by array passed to param

@@ -35,7 +35,9 @@ define('DB_ERR_DELETE',-54);
 define('DB_ERR_SELECT',-55);
 
 define('DB_INSERT',52);
+define('DB_UPDATE',53);
 define('DB_DELETE',54);
 define('DB_SELECT',55);
 
+define('NAMED_PARAM_EQUI',1)
 ?>
